@@ -1,0 +1,109 @@
+PARSER_BEGIN(Parser)
+
+public class Parser {
+
+  public static void main(String args[]) {
+    Parser parser = new Parser(System.in);
+    ASTNode expression;
+    IValue value;
+
+    while (true) {
+      try {
+        expression = parser.Start();
+        value = expression.eval();
+        System.out.println(value.show());
+      } catch (ParseException e) {
+        e.printStackTrace();
+        parser.ReInit(System.in);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
+}
+
+PARSER_END(Parser)
+
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+}
+
+TOKEN :
+{
+  < ASSIGN : "=" >
+| < PLUS : "+" >
+| < MINUS : "-" >
+| < TIMES : "*" >
+| < DIV : "/" >
+| < LPAR : "(" >
+| < RPAR : ")" >
+| < EL : ";;" >
+| < NUM : (["0"-"9"])+ >
+| < ID : ["a"-"z","A"-"Z","_"] (["a"-"z","A"-"Z","_","0"-"9"])* >
+}
+
+ASTNode Start() :
+{
+  ASTNode t;
+}
+{
+  t = Expression() <EL>
+  { return t; }
+}
+
+ASTNode Expression() :
+{
+  Token op;
+  ASTNode t1, t2;
+}
+{
+  t1=Term()
+  ( (op=<PLUS> | op=<MINUS>) t2=Term()
+    {
+      if (op.kind == PLUS) {
+        t1 = new ASTAdd(t1, t2);
+      } else {
+        t1 = new ASTSub(t1, t2);
+      }
+    }
+  )*
+  { return t1; }
+}
+
+ASTNode Term() :
+{
+  Token op;
+  ASTNode t1, t2;
+}
+{
+  t1 = Factor()
+  ( (op=<TIMES> | op=<DIV>) t2=Factor()
+    {
+      if (op.kind == TIMES) {
+        t1 = new ASTMul(t1, t2);
+      } else {
+        t1 = new ASTDiv(t1, t2);
+      }
+    }
+  )*
+  { return t1; }
+}
+
+ASTNode Factor() :
+{
+  Token n;
+  ASTNode t1, t2;
+}
+{
+  (
+    n=<NUM>
+    { t1 = new ASTNum(Integer.parseInt(n.image)); }
+  |
+    <LPAR> t1=Expression() <RPAR>
+  )
+  { return t1; }
+}
