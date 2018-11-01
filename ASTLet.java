@@ -1,21 +1,27 @@
-public class ASTLet implements ASTNode {
-    private String name;
-    private ASTNode init, body;
+import java.util.List;
+import java.util.ArrayList;
 
-    public ASTLet(String name, ASTNode init, ASTNode body) {
-        this.name = name;
-        this.init = init;
+public class ASTLet implements ASTNode {
+    private List<String> names;
+    private List<ASTNode> init_exprs;
+    private ASTNode body;
+
+    public ASTLet(List<String> names, List<ASTNode> init_exprs, ASTNode body) {
+        this.names = names;
+        this.init_exprs = init_exprs;
         this.body = body;
     }
 
     public IValue eval(Environment env) throws InvalidTypeException, NameNotDefinedException, NameAlreadyDefinedException {
-        IValue v1 = init.eval(env);
-        
         Environment bodyEnv = env.beginScope();
-        bodyEnv.assoc(name,v1);
-        
-        IValue v2 = body.eval(bodyEnv);
+
+        for (int i = 0; i < names.size(); i++) {
+            IValue value = init_exprs.get(i).eval(env);
+            bodyEnv.assoc(names.get(i), value);
+        }
+
+        IValue ret_value = body.eval(bodyEnv);
         bodyEnv.endScope();
-        return v2;
+        return ret_value;
     }
 }

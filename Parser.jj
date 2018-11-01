@@ -1,5 +1,8 @@
 PARSER_BEGIN(Parser)
 
+import java.util.List;
+import java.util.ArrayList;
+
 public class Parser {
 
   public static void main(String args[]) {
@@ -212,12 +215,13 @@ ASTNode Factor() :
 {
   Token n;
   ASTNode t1, t2, t3;
+  List<String> ids = new ArrayList<String>();
+  List<ASTNode> init_exprs = new ArrayList<ASTNode>();
 }
 {
   (
-  
     n=<ID>
-    {t1 = new ASTId(n.image);}
+    { t1 = new ASTId(n.image); }
   |
     n=<NUM>
     { t1 = new ASTNum(Integer.parseInt(n.image)); }
@@ -230,9 +234,16 @@ ASTNode Factor() :
   |
     <WHILE> t1=Expression() <DO> t2=Expression() <END>
     { t1 = new ASTWhile(t1, t2); }
-  | 
-    <LET> n=<ID> <ASSIGN> t1=Expression() <IN> t2=Expression() <END>
-    { t1 = new ASTLet(n.image,t1,t2);}
+  |
+    <LET>
+    ( n=<ID> <ASSIGN> t1=Expression()
+      {
+        ids.add(n.image);
+        init_exprs.add(t1);
+      }
+    )+
+    <IN> t2=Expression() <END>
+    { t1 = new ASTLet(ids, init_exprs, t2); }
   |
     <LPAR> t1=Expression() <RPAR>
   )
