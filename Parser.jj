@@ -56,6 +56,7 @@ TOKEN :
 | < NOT : "~" >
 | < LPAR : "(" >
 | < RPAR : ")" >
+| < SEQ : ";" >
 | < EL : ";;" >
 | < NUM : (["0"-"9"])+ >
 | < TRUE : "true" >
@@ -68,8 +69,20 @@ ASTNode Start() :
   ASTNode t;
 }
 {
-  t = LogicalOR() <EL>
+  t = Expression() <EL>
   { return t; }
+}
+
+ASTNode Expression() :
+{
+  ASTNode t1, t2;
+}
+{
+  t1=LogicalOR()
+  ( <SEQ> t2=LogicalOR()
+    { t1 = new ASTSeq(t1, t2); }
+  )*
+  { return t1; }
 }
 
 ASTNode LogicalOR() :
@@ -121,8 +134,8 @@ ASTNode Comparison() :
   ASTNode t1, t2;
 }
 {
-  t1=Expression()
-  ( (op=<GT> | op=<LT> | op=<GTE> | op=<LTE>) t2=Expression()
+  t1=AddSub()
+  ( (op=<GT> | op=<LT> | op=<GTE> | op=<LTE>) t2=AddSub()
     {
       if (op.kind == GT) {
         t1 = new ASTGreaterThan(t1, t2);
@@ -138,14 +151,14 @@ ASTNode Comparison() :
   { return t1; }
 }
 
-ASTNode Expression() :
+ASTNode AddSub() :
 {
   Token op;
   ASTNode t1, t2;
 }
 {
-  t1=Term()
-  ( (op=<PLUS> | op=<MINUS>) t2=Term()
+  t1=MulDiv()
+  ( (op=<PLUS> | op=<MINUS>) t2=MulDiv()
     {
       if (op.kind == PLUS) {
         t1 = new ASTAdd(t1, t2);
@@ -157,7 +170,7 @@ ASTNode Expression() :
   { return t1; }
 }
 
-ASTNode Term() :
+ASTNode MulDiv() :
 {
   Token op;
   ASTNode t1, t2;
@@ -206,13 +219,13 @@ ASTNode Factor() :
     (n=<TRUE> | n=<FALSE>)
     { t1 = new ASTBool(Boolean.parseBoolean(n.image)); }
   |
-    <IF> t1=LogicalOR() <THEN> t2=LogicalOR() <ELSE> t3=LogicalOR() <END>
+    <IF> t1=Expression() <THEN> t2=Expression() <ELSE> t3=Expression() <END>
     { t1 = new ASTIf(t1, t2, t3); }
   |
-    <WHILE> t1=LogicalOR() <DO> t2=LogicalOR() <END>
+    <WHILE> t1=Expression() <DO> t2=Expression() <END>
     { t1 = new ASTWhile(t1, t2); }
   |
-    <LPAR> t1=LogicalOR() <RPAR>
+    <LPAR> t1=Expression() <RPAR>
   )
   { return t1; }
 }
