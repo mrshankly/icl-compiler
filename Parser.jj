@@ -43,6 +43,8 @@ TOKEN :
 | < LT : "<" >
 | < GTE : ">=" >
 | < LTE : "<=" >
+| < EQ : "==" >
+| < NEQ : "~=" >
 | < OR : "||" >
 | < AND : "&&" >
 | < NOT : "~" >
@@ -81,10 +83,29 @@ ASTNode LogicalAND() :
   ASTNode t1, t2;
 }
 {
-  t1=Comparison()
-  ( <AND> t2=Comparison()
+  t1=Equality()
+  ( <AND> t2=Equality()
     { t1 = new ASTAnd(t1, t2); }
   )*
+  { return t1; }
+}
+
+ASTNode Equality() :
+{
+  Token op;
+  ASTNode t1, t2;
+}
+{
+  t1=Comparison()
+  ( (op=<EQ> | op=<NEQ>) t2=Comparison()
+    {
+      if (op.kind == EQ) {
+        t1 = new ASTEquals(t1, t2);
+      } else {
+        t1 = new ASTNotEquals(t1, t2);
+      }
+    }
+  )?
   { return t1; }
 }
 

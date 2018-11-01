@@ -12,4 +12,11 @@ public class VBool implements IValue {
     public String show() {
         return String.format("%s", value ? "true" : "false");
     }
+  
+    @Override
+    public boolean equals(Object obj){
+        if(!(obj instanceof VBool))
+            return false;
+        return value == ((VBool)obj).value;
+    }
 }
