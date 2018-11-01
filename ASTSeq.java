@@ -6,8 +6,8 @@ public class ASTSeq implements ASTNode {
         this.expression2 = expression2;
     }
 
-    public IValue eval() throws InvalidTypeException {
-        expression1.eval();
-        return expression2.eval();
+    public IValue eval(Environment env) throws InvalidTypeException, NameNotDefinedException, NameAlreadyDefinedException {
+        expression1.eval(env);
+        return expression2.eval(env);
     }
 }

@@ -5,7 +5,7 @@ public class ASTBool implements ASTNode {
         this.value = value;
     }
 
-    public IValue eval() {
+    public IValue eval(Environment env) {
         return new VBool(value);
     }
 }

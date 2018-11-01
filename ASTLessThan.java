@@ -6,9 +6,9 @@ public class ASTLessThan implements ASTNode {
         this.right = right;
     }
 
-    public IValue eval() throws InvalidTypeException {
-        IValue v1 = left.eval();
-        IValue v2 = right.eval();
+    public IValue eval(Environment env) throws InvalidTypeException, NameNotDefinedException, NameAlreadyDefinedException {
+        IValue v1 = left.eval(env);
+        IValue v2 = right.eval(env);
 
         if (!(v1 instanceof VInt) || !(v2 instanceof VInt)) {
             throw new InvalidTypeException();

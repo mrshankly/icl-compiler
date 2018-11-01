@@ -5,9 +5,9 @@ public class Environment {
 
     private class Binding {
         public final String name;
-        public final int value;
+        public final IValue value;
 
-        public Binding(String name, int value) {
+        public Binding(String name, IValue value) {
             this.name = name;
             this.value = value;
         }
@@ -42,14 +42,14 @@ public class Environment {
         return null;
     }
 
-    public void assoc(String name, int value) throws NameAlreadyDefinedException {
-        if (getBinding(name) == null) {
+    public void assoc(String name, IValue value) throws NameAlreadyDefinedException {
+        if (getBinding(name) != null) {
             throw new NameAlreadyDefinedException();
         }
         bindings.add(new Binding(name, value));
     }
 
-    public int find(String name) throws NameNotDefinedException {
+    public IValue find(String name) throws NameNotDefinedException {
         Environment env = this;
 
         while (env != null) {

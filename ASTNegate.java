@@ -5,8 +5,8 @@ public class ASTNegate implements ASTNode {
         this.node = node;
     }
 
-    public IValue eval() throws InvalidTypeException {
-        IValue v1 = node.eval();
+    public IValue eval(Environment env) throws InvalidTypeException, NameNotDefinedException, NameAlreadyDefinedException {
+        IValue v1 = node.eval(env);
 
         if (!(v1 instanceof VInt)) {
             throw new InvalidTypeException();

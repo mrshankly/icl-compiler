@@ -5,8 +5,8 @@ public class ASTNot implements ASTNode {
         this.node = node;
     }
 
-    public IValue eval() throws InvalidTypeException {
-        IValue value = node.eval();
+    public IValue eval(Environment env) throws InvalidTypeException, NameNotDefinedException, NameAlreadyDefinedException {
+        IValue value = node.eval(env);
 
         if (!(value instanceof VBool)) {
             throw new InvalidTypeException();

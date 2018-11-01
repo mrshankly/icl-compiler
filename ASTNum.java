@@ -5,7 +5,7 @@ public class ASTNum implements ASTNode {
         this.value = value;
     }
 
-    public IValue eval() {
+    public IValue eval(Environment env) {
         return new VInt(value);
     }
 }

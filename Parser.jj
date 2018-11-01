@@ -10,7 +10,7 @@ public class Parser {
     while (true) {
       try {
         expression = parser.Start();
-        value = expression.eval();
+        value = expression.eval(new Environment());
         System.out.println(value.show());
       } catch (ParseException e) {
         e.printStackTrace();
@@ -39,6 +39,8 @@ TOKEN :
 | < ELSE : "else" >
 | < WHILE : "while" >
 | < DO : "do" >
+| < LET : "let" >
+| < IN : "in" >
 | < END : "end" >
 | < ASSIGN : "=" >
 | < PLUS : "+" >
@@ -213,6 +215,10 @@ ASTNode Factor() :
 }
 {
   (
+  
+    n=<ID>
+    {t1 = new ASTId(n.image);}
+  |
     n=<NUM>
     { t1 = new ASTNum(Integer.parseInt(n.image)); }
   |
@@ -224,6 +230,9 @@ ASTNode Factor() :
   |
     <WHILE> t1=Expression() <DO> t2=Expression() <END>
     { t1 = new ASTWhile(t1, t2); }
+  | 
+    <LET> n=<ID> <ASSIGN> t1=Expression() <IN> t2=Expression() <END>
+    { t1 = new ASTLet(n.image,t1,t2);}
   |
     <LPAR> t1=Expression() <RPAR>
   )
