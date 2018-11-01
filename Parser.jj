@@ -98,8 +98,11 @@ ASTNode Assignment() :
   ASTNode t1, t2;
 }
 {
-  t1=LogicalOR() <ASSIGNREF> t2=LogicalOR()
-  { return new ASTAssign(t1,t2); }
+  t1=LogicalOR()
+  ( <ASSIGNREF> t2=LogicalOR()
+    { t1 = new ASTAssign(t1, t2); }
+  )?
+  { return t1; }
 }
 
 ASTNode LogicalOR() :
@@ -220,7 +223,7 @@ ASTNode Unary() :
   |
     <NOT> t1=Unary()
     { t1 = new ASTNot(t1); }
-  | 
+  |
     <DEREF> t1=Unary()
     { t1 = new ASTDeRef(t1); }
   |
