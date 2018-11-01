@@ -40,12 +40,14 @@ TOKEN :
   < IF : "if" >
 | < THEN : "then" >
 | < ELSE : "else" >
+| < NEW : "new" >
 | < WHILE : "while" >
 | < DO : "do" >
 | < LET : "let" >
 | < IN : "in" >
 | < END : "end" >
 | < ASSIGN : "=" >
+| < ASSIGNREF : ":=" >
 | < PLUS : "+" >
 | < MINUS : "-" >
 | < TIMES : "*" >
@@ -62,6 +64,7 @@ TOKEN :
 | < LPAR : "(" >
 | < RPAR : ")" >
 | < SEQ : ";" >
+| < DEREF : "!" >
 | < EL : ";;" >
 | < NUM : (["0"-"9"])+ >
 | < TRUE : "true" >
@@ -83,11 +86,20 @@ ASTNode Expression() :
   ASTNode t1, t2;
 }
 {
-  t1=LogicalOR()
-  ( <SEQ> t2=LogicalOR()
+  t1=Assignment()
+  ( <SEQ> t2=Assignment()
     { t1 = new ASTSeq(t1, t2); }
   )*
   { return t1; }
+}
+
+ASTNode Assignment() :
+{
+  ASTNode t1, t2;
+}
+{
+  t1=LogicalOR() <ASSIGNREF> t2=LogicalOR()
+  { return new ASTAssign(t1,t2); }
 }
 
 ASTNode LogicalOR() :
@@ -162,8 +174,8 @@ ASTNode AddSub() :
   ASTNode t1, t2;
 }
 {
-  t1=MulDiv()
-  ( (op=<PLUS> | op=<MINUS>) t2=MulDiv()
+  t1=Term()
+  ( (op=<PLUS> | op=<MINUS>) t2=Term()
     {
       if (op.kind == PLUS) {
         t1 = new ASTAdd(t1, t2);
@@ -175,7 +187,7 @@ ASTNode AddSub() :
   { return t1; }
 }
 
-ASTNode MulDiv() :
+ASTNode Term() :
 {
   Token op;
   ASTNode t1, t2;
@@ -191,6 +203,7 @@ ASTNode MulDiv() :
       }
     }
   )*
+
   { return t1; }
 }
 
@@ -207,6 +220,12 @@ ASTNode Unary() :
   |
     <NOT> t1=Unary()
     { t1 = new ASTNot(t1); }
+  | 
+    <DEREF> t1=Unary()
+    { t1 = new ASTDeRef(t1); }
+  |
+    <NEW> t1=Unary()
+    { t1 = new ASTNew(t1); }
   )
   { return t1; }
 }
