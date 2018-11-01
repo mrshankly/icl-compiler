@@ -5,9 +5,9 @@ public class ASTDeRef implements ASTNode {
         this.expression = expression;
     }
 
-    public IValue eval(Environment env) throws InvalidTypeException, NameNotDefinedException, NameAlreadyDefinedException {
+    public IValue eval(Environment env) throws ArgumentsNumberMismatchException, InvalidTypeException, NameNotDefinedException, NameAlreadyDefinedException {
         IValue reference = expression.eval(env);
-        
+
         if (!(reference instanceof VCell)) {
             throw new InvalidTypeException();
         }

@@ -12,7 +12,7 @@ public class ASTLet implements ASTNode {
         this.body = body;
     }
 
-    public IValue eval(Environment env) throws InvalidTypeException, NameNotDefinedException, NameAlreadyDefinedException {
+    public IValue eval(Environment env) throws ArgumentsNumberMismatchException, InvalidTypeException, NameNotDefinedException, NameAlreadyDefinedException {
         Environment bodyEnv = env.beginScope();
 
         for (int i = 0; i < names.size(); i++) {

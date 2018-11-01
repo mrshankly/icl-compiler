@@ -45,6 +45,8 @@ TOKEN :
 | < DO : "do" >
 | < LET : "let" >
 | < IN : "in" >
+| < FUN : "fun" >
+| < ARROW : "->" >
 | < END : "end" >
 | < ASSIGN : "=" >
 | < ASSIGNREF : ":=" >
@@ -63,6 +65,7 @@ TOKEN :
 | < NOT : "~" >
 | < LPAR : "(" >
 | < RPAR : ")" >
+| < COMMA : "," >
 | < SEQ : ";" >
 | < DEREF : "!" >
 | < EL : ";;" >
@@ -206,7 +209,6 @@ ASTNode Term() :
       }
     }
   )*
-
   { return t1; }
 }
 
@@ -216,7 +218,7 @@ ASTNode Unary() :
 }
 {
   (
-    t1=Factor()
+    t1=FunctionCall()
   |
     <MINUS> t1=Unary()
     { t1 = new ASTNegate(t1); }
@@ -230,6 +232,28 @@ ASTNode Unary() :
     <NEW> t1=Unary()
     { t1 = new ASTNew(t1); }
   )
+  { return t1; }
+}
+
+ASTNode FunctionCall() :
+{
+  ASTNode t1, t2;
+  List<ASTNode> args = new ArrayList<ASTNode>();
+}
+{
+  t1=Factor()
+  (
+    <LPAR>
+    (
+      t2=Expression() { args.add(t2); }
+      (
+        <COMMA> t2=Expression()
+        { args.add(t2); }
+      )*
+    )?
+    <RPAR>
+    { t1 = new ASTApply(t1, args); }
+  )?
   { return t1; }
 }
 
@@ -266,6 +290,17 @@ ASTNode Factor() :
     )+
     <IN> t2=Expression() <END>
     { t1 = new ASTLet(ids, init_exprs, t2); }
+  |
+    <FUN>
+    (
+      n=<ID> { ids.add(n.image); }
+      (
+        <COMMA> n=<ID>
+        { ids.add(n.image); }
+      )*
+    )?
+    <ARROW> t1=Expression() <END>
+    { t1 = new ASTFun(ids, t1); }
   |
     <LPAR> t1=Expression() <RPAR>
   )

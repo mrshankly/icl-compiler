@@ -7,7 +7,7 @@ public class ASTIf implements ASTNode {
         this.falseExpression = falseExpression;
     }
 
-    public IValue eval(Environment env) throws InvalidTypeException, NameNotDefinedException, NameAlreadyDefinedException {
+    public IValue eval(Environment env) throws ArgumentsNumberMismatchException, InvalidTypeException, NameNotDefinedException, NameAlreadyDefinedException {
         IValue v1 = condition.eval(env);
 
         if (!(v1 instanceof VBool)) {
