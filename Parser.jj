@@ -80,8 +80,8 @@ ASTNode Term() :
   ASTNode t1, t2;
 }
 {
-  t1 = Factor()
-  ( (op=<TIMES> | op=<DIV>) t2=Factor()
+  t1 = Unary()
+  ( (op=<TIMES> | op=<DIV>) t2=Unary()
     {
       if (op.kind == TIMES) {
         t1 = new ASTMul(t1, t2);
@@ -91,6 +91,20 @@ ASTNode Term() :
     }
   )*
   { return t1; }
+}
+
+ASTNode Unary() :
+{
+  ASTNode t1;
+}
+{
+  (
+    t1 = Factor()
+  | 
+    <MINUS>t1 = Unary() 
+    { t1 = new ASTNegate(t1); }
+  )
+  {return t1;}
 }
 
 ASTNode Factor() :
