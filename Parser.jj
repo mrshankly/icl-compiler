@@ -39,6 +39,10 @@ TOKEN :
 | < MINUS : "-" >
 | < TIMES : "*" >
 | < DIV : "/" >
+| < GT : ">" >
+| < LT : "<" >
+| < GTE : ">=" >
+| < LTE : "<=" >
 | < LPAR : "(" >
 | < RPAR : ")" >
 | < EL : ";;" >
@@ -53,8 +57,31 @@ ASTNode Start() :
   ASTNode t;
 }
 {
-  t = Expression() <EL>
+  t = Comparison() <EL>
   { return t; }
+}
+
+ASTNode Comparison() :
+{
+  Token op;
+  ASTNode t1, t2;
+}
+{
+  t1=Expression()
+  ( (op=<GT> | op=<LT> | op=<GTE> | op=<LTE>) t2=Expression()
+    {
+      if (op.kind == GT) {
+        t1 = new ASTGreaterThan(t1, t2);
+      } else if (op.kind == LT) {
+        t1 = new ASTLessThan(t1, t2);
+      } else if (op.kind == GTE) {
+        t1 = new ASTGreaterThanEqual(t1, t2);
+      } else {
+        t1 = new ASTLessThanEqual(t1, t2);
+      }
+    }
+  )?
+  { return t1; }
 }
 
 ASTNode Expression() :
