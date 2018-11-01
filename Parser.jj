@@ -43,6 +43,8 @@ TOKEN :
 | < RPAR : ")" >
 | < EL : ";;" >
 | < NUM : (["0"-"9"])+ >
+| < TRUE : "true" >
+| < FALSE : "false" >
 | < ID : ["a"-"z","A"-"Z","_"] (["a"-"z","A"-"Z","_","0"-"9"])* >
 }
 
@@ -100,8 +102,8 @@ ASTNode Unary() :
 {
   (
     t1 = Factor()
-  | 
-    <MINUS>t1 = Unary() 
+  |
+    <MINUS>t1 = Unary()
     { t1 = new ASTNegate(t1); }
   )
   {return t1;}
@@ -116,6 +118,9 @@ ASTNode Factor() :
   (
     n=<NUM>
     { t1 = new ASTNum(Integer.parseInt(n.image)); }
+  |
+    (n=<TRUE> | n=<FALSE>)
+    { t1 = new ASTBool(Boolean.parseBoolean(n.image)); }
   |
     <LPAR> t1=Expression() <RPAR>
   )
