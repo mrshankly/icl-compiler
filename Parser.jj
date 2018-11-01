@@ -34,7 +34,11 @@ SKIP :
 
 TOKEN :
 {
-  < ASSIGN : "=" >
+  < IF : "if" >
+| < THEN : "then" >
+| < ELSE : "else" >
+| < END : "end" >
+| < ASSIGN : "=" >
 | < PLUS : "+" >
 | < MINUS : "-" >
 | < TIMES : "*" >
@@ -190,7 +194,7 @@ ASTNode Unary() :
 ASTNode Factor() :
 {
   Token n;
-  ASTNode t1, t2;
+  ASTNode t1, t2, t3;
 }
 {
   (
@@ -201,6 +205,9 @@ ASTNode Factor() :
     { t1 = new ASTBool(Boolean.parseBoolean(n.image)); }
   |
     <LPAR> t1=LogicalOR() <RPAR>
+  |
+    <IF> t1=LogicalOR() <THEN> t2=LogicalOR() <ELSE> t3=LogicalOR() <END>
+    {t1 = new ASTIf(t1,t2,t3);}
   )
   { return t1; }
 }
