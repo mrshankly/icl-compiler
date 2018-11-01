@@ -43,6 +43,9 @@ TOKEN :
 | < LT : "<" >
 | < GTE : ">=" >
 | < LTE : "<=" >
+| < OR : "||" >
+| < AND : "&&" >
+| < NOT : "~" >
 | < LPAR : "(" >
 | < RPAR : ")" >
 | < EL : ";;" >
@@ -57,8 +60,32 @@ ASTNode Start() :
   ASTNode t;
 }
 {
-  t = Comparison() <EL>
+  t = LogicalOR() <EL>
   { return t; }
+}
+
+ASTNode LogicalOR() :
+{
+  ASTNode t1, t2;
+}
+{
+  t1=LogicalAND()
+  ( <OR> t2=LogicalAND()
+    { t1 = new ASTOr(t1, t2); }
+  )*
+  { return t1; }
+}
+
+ASTNode LogicalAND() :
+{
+  ASTNode t1, t2;
+}
+{
+  t1=Comparison()
+  ( <AND> t2=Comparison()
+    { t1 = new ASTAnd(t1, t2); }
+  )*
+  { return t1; }
 }
 
 ASTNode Comparison() :
@@ -109,7 +136,7 @@ ASTNode Term() :
   ASTNode t1, t2;
 }
 {
-  t1 = Unary()
+  t1=Unary()
   ( (op=<TIMES> | op=<DIV>) t2=Unary()
     {
       if (op.kind == TIMES) {
@@ -128,12 +155,15 @@ ASTNode Unary() :
 }
 {
   (
-    t1 = Factor()
+    t1=Factor()
   |
-    <MINUS>t1 = Unary()
+    <MINUS> t1=Unary()
     { t1 = new ASTNegate(t1); }
+  |
+    <NOT> t1=Unary()
+    { t1 = new ASTNot(t1); }
   )
-  {return t1;}
+  { return t1; }
 }
 
 ASTNode Factor() :
@@ -149,7 +179,7 @@ ASTNode Factor() :
     (n=<TRUE> | n=<FALSE>)
     { t1 = new ASTBool(Boolean.parseBoolean(n.image)); }
   |
-    <LPAR> t1=Expression() <RPAR>
+    <LPAR> t1=LogicalOR() <RPAR>
   )
   { return t1; }
 }
