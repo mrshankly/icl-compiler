@@ -24,7 +24,13 @@ public class VClosure implements IValue {
         return env;
     }
 
+    @Override
     public String show() {
         return String.format("Closure[%d]", params.size());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj == this;
     }
 }

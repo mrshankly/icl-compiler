@@ -13,7 +13,13 @@ public class VCell implements IValue {
         this.value = value;
     }
 
+    @Override
     public String show() {
         return String.format("Ref[%s]", value.show());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj == this;
     }
 }
