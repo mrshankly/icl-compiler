@@ -6,7 +6,11 @@ public class ASTAssign implements ASTNode {
         this.right = right;
     }
 
-    public IValue eval(Environment env) throws ArgumentsNumberMismatchException, InvalidTypeException, NameNotDefinedException, NameAlreadyDefinedException {
+    public IValue eval(Environment env) throws ArgumentsNumberMismatchException,
+                                               InvalidTypeException,
+                                               NameAlreadyDefinedException,
+                                               NameNotDefinedException
+    {
         IValue reference = left.eval(env);
 
         if (!(reference instanceof VCell)) {

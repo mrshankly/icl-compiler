@@ -6,9 +6,12 @@ public class ASTWhile implements ASTNode {
         this.expression = expression;
     }
 
-    public IValue eval(Environment env) throws ArgumentsNumberMismatchException, InvalidTypeException, NameNotDefinedException, NameAlreadyDefinedException {
+    public IValue eval(Environment env) throws ArgumentsNumberMismatchException,
+                                               InvalidTypeException,
+                                               NameAlreadyDefinedException,
+                                               NameNotDefinedException
+    {
         IValue v1 = condition.eval(env);
-
         if (!(v1 instanceof VBool)) {
             throw new InvalidTypeException("Type mismatch");
         }

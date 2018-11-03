@@ -10,7 +10,11 @@ public class ASTApply implements ASTNode {
         this.args = args;
     }
 
-    public IValue eval(Environment env) throws ArgumentsNumberMismatchException, InvalidTypeException, NameNotDefinedException, NameAlreadyDefinedException {
+    public IValue eval(Environment env) throws ArgumentsNumberMismatchException,
+                                               InvalidTypeException,
+                                               NameAlreadyDefinedException,
+                                               NameNotDefinedException
+    {
         IValue v1 = lambda.eval(env);
         if (!(v1 instanceof VClosure)) {
             throw new InvalidTypeException();

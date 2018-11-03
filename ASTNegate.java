@@ -5,7 +5,11 @@ public class ASTNegate implements ASTNode {
         this.node = node;
     }
 
-    public IValue eval(Environment env) throws ArgumentsNumberMismatchException, InvalidTypeException, NameNotDefinedException, NameAlreadyDefinedException {
+    public IValue eval(Environment env) throws ArgumentsNumberMismatchException,
+                                               InvalidTypeException,
+                                               NameAlreadyDefinedException,
+                                               NameNotDefinedException
+    {
         IValue v1 = node.eval(env);
 
         if (!(v1 instanceof VInt)) {

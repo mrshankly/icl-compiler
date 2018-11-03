@@ -6,7 +6,11 @@ public class ASTDiv implements ASTNode {
         this.right = right;
     }
 
-    public IValue eval(Environment env) throws ArgumentsNumberMismatchException, InvalidTypeException, NameNotDefinedException, NameAlreadyDefinedException{
+    public IValue eval(Environment env) throws ArgumentsNumberMismatchException,
+                                               InvalidTypeException,
+                                               NameAlreadyDefinedException,
+                                               NameNotDefinedException
+    {
         IValue v1 = left.eval(env);
         IValue v2 = right.eval(env);
 
