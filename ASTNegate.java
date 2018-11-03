@@ -10,11 +10,11 @@ public class ASTNegate implements ASTNode {
                                                NameAlreadyDefinedException,
                                                NameNotDefinedException
     {
-        IValue v1 = node.eval(env);
+        IValue value = node.eval(env);
 
-        if (!(v1 instanceof VInt)) {
-            throw new InvalidTypeException();
+        if (!(value instanceof VInt)) {
+            throw new InvalidTypeException(VInt.TYPE, value.showType());
         }
-        return new VInt(-1*((VInt) v1).getValue());
+        return new VInt(-((VInt) value).getValue());
     }
 }

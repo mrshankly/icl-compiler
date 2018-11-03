@@ -14,7 +14,7 @@ public class ASTAssign implements ASTNode {
         IValue reference = left.eval(env);
 
         if (!(reference instanceof VCell)) {
-            throw new InvalidTypeException();
+            throw new InvalidTypeException(VCell.TYPE, reference.showType());
         }
 
         IValue value = right.eval(env);

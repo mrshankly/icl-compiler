@@ -15,7 +15,7 @@ public class ASTNotEquals implements ASTNode {
         IValue v2 = right.eval(env);
 
         if (!(v1.getClass().equals(v2.getClass()))) {
-            throw new InvalidTypeException("Type mismatch");
+            throw new InvalidTypeException(v1.showType(), v2.showType());
         }
         return new VBool(!(v1.equals(v2)));
     }

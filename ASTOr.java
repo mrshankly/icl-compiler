@@ -14,8 +14,11 @@ public class ASTOr implements ASTNode {
         IValue v1 = left.eval(env);
         IValue v2 = right.eval(env);
 
-        if (!(v1 instanceof VBool) || !(v2 instanceof VBool)) {
-            throw new InvalidTypeException();
+        if (!(v1 instanceof VBool)) {
+            throw new InvalidTypeException(VBool.TYPE, v1.showType());
+        }
+        if (!(v2 instanceof VBool)) {
+            throw new InvalidTypeException(VBool.TYPE, v2.showType());
         }
         return new VBool(((VBool) v1).getValue() || ((VBool) v2).getValue());
     }

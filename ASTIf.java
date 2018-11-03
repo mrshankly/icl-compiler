@@ -15,11 +15,12 @@ public class ASTIf implements ASTNode {
         IValue v1 = condition.eval(env);
 
         if (!(v1 instanceof VBool)) {
-            throw new InvalidTypeException("Type mismatch");
+            throw new InvalidTypeException(VBool.TYPE, v1.showType());
         }
-        if(((VBool)v1).getValue())
+        if (((VBool) v1).getValue()) {
             return trueExpression.eval(env);
-        else
+        } else {
             return falseExpression.eval(env);
+        }
     }
 }

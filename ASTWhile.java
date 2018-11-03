@@ -13,7 +13,7 @@ public class ASTWhile implements ASTNode {
     {
         IValue v1 = condition.eval(env);
         if (!(v1 instanceof VBool)) {
-            throw new InvalidTypeException("Type mismatch");
+            throw new InvalidTypeException(VBool.TYPE, v1.showType());
         }
 
         while (((VBool) v1).getValue()) {
@@ -21,7 +21,7 @@ public class ASTWhile implements ASTNode {
 
             v1 = condition.eval(env);
             if (!(v1 instanceof VBool)) {
-                throw new InvalidTypeException("Type mismatch");
+                throw new InvalidTypeException(VBool.TYPE, v1.showType());
             }
         }
         return v1;

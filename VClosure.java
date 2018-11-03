@@ -2,6 +2,8 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class VClosure implements IValue {
+    public static final String TYPE = "closure";
+
     private List<String> params;
     private ASTNode body;
     private Environment env;
@@ -27,6 +29,11 @@ public class VClosure implements IValue {
     @Override
     public String show() {
         return String.format("Closure[%d]", params.size());
+    }
+
+    @Override
+    public String showType() {
+        return TYPE;
     }
 
     @Override

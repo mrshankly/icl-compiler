@@ -14,8 +14,11 @@ public class ASTGreaterThanEqual implements ASTNode {
         IValue v1 = left.eval(env);
         IValue v2 = right.eval(env);
 
-        if (!(v1 instanceof VInt) || !(v2 instanceof VInt)) {
-            throw new InvalidTypeException();
+        if (!(v1 instanceof VInt)) {
+            throw new InvalidTypeException(VInt.TYPE, v1.showType());
+        }
+        if (!(v2 instanceof VInt)) {
+            throw new InvalidTypeException(VInt.TYPE, v2.showType());
         }
         return new VBool(((VInt) v1).getValue() >= ((VInt) v2).getValue());
     }

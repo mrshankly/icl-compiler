@@ -13,7 +13,7 @@ public class ASTDeRef implements ASTNode {
         IValue reference = expression.eval(env);
 
         if (!(reference instanceof VCell)) {
-            throw new InvalidTypeException();
+            throw new InvalidTypeException(VCell.TYPE, reference.showType());
         }
         return ((VCell) reference).get();
     }

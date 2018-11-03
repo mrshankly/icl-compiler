@@ -44,7 +44,7 @@ public class Environment {
 
     public void assoc(String name, IValue value) throws NameAlreadyDefinedException {
         if (getBinding(name) != null) {
-            throw new NameAlreadyDefinedException();
+            throw new NameAlreadyDefinedException("Error: Name '" + name + "' is already defined.");
         }
         bindings.add(new Binding(name, value));
     }
@@ -59,6 +59,6 @@ public class Environment {
             }
             env = env.parent;
         }
-        throw new NameNotDefinedException();
+        throw new NameNotDefinedException("Error: Name '" + name + "' is undefined.");
     }
 }

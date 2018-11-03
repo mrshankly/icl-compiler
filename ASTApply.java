@@ -17,13 +17,13 @@ public class ASTApply implements ASTNode {
     {
         IValue v1 = lambda.eval(env);
         if (!(v1 instanceof VClosure)) {
-            throw new InvalidTypeException();
+            throw new InvalidTypeException(VClosure.TYPE, v1.showType());
         }
         VClosure closure = (VClosure)v1;
 
         List<String> params = closure.getParams();
         if (args.size() != params.size()) {
-            throw new ArgumentsNumberMismatchException();
+            throw new ArgumentsNumberMismatchException(params.size(), args.size());
         }
 
         Environment innerEnv = closure.getEnvironment().beginScope();

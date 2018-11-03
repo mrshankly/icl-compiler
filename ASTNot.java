@@ -13,7 +13,7 @@ public class ASTNot implements ASTNode {
         IValue value = node.eval(env);
 
         if (!(value instanceof VBool)) {
-            throw new InvalidTypeException();
+            throw new InvalidTypeException(VBool.TYPE, value.showType());
         }
         return new VBool(!((VBool) value).getValue());
     }
