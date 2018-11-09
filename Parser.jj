@@ -220,8 +220,8 @@ ASTNode AddSub() :
   ASTNode t1, t2;
 }
 {
-  t1=Term()
-  ( (op=<PLUS> | op=<MINUS>) t2=Term()
+  t1=MulDiv()
+  ( (op=<PLUS> | op=<MINUS>) t2=MulDiv()
     {
       if (op.kind == PLUS) {
         t1 = new ASTAdd(t1, t2);
@@ -233,7 +233,7 @@ ASTNode AddSub() :
   { return t1; }
 }
 
-ASTNode Term() :
+ASTNode MulDiv() :
 {
   Token op;
   ASTNode t1, t2;
