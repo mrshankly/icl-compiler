@@ -6,24 +6,22 @@ public class ASTWhile implements ASTNode {
         this.expression = expression;
     }
 
-    public IValue eval(Environment env) throws ArgumentsNumberMismatchException,
-                                               InvalidTypeException,
-                                               NameAlreadyDefinedException,
-                                               NameNotDefinedException
-    {
-        IValue v1 = condition.eval(env);
-        if (!(v1 instanceof VBool)) {
-            throw new InvalidTypeException(VBool.TYPE, v1.showType());
-        }
+    public IValue eval(Environment<IValue> env) {
+        VBool cond = (VBool) condition.eval(env);
 
-        while (((VBool) v1).getValue()) {
+        while (cond.getValue()) {
             expression.eval(env);
-
-            v1 = condition.eval(env);
-            if (!(v1 instanceof VBool)) {
-                throw new InvalidTypeException(VBool.TYPE, v1.showType());
-            }
+            cond = (VBool) condition.eval(env);
         }
-        return v1;
+        return cond;
+    }
+
+    public IType typecheck(Environment<IType> env) throws TypeException {
+        IType conditionType = condition.typecheck(env);
+
+        if (!(conditionType instanceof TBool)) {
+            throw new TypeException(TBool.getInstance(), conditionType);
+        }
+        return conditionType;
     }
 }

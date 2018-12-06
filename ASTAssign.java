@@ -6,19 +6,31 @@ public class ASTAssign implements ASTNode {
         this.right = right;
     }
 
-    public IValue eval(Environment env) throws ArgumentsNumberMismatchException,
-                                               InvalidTypeException,
-                                               NameAlreadyDefinedException,
-                                               NameNotDefinedException
-    {
-        IValue reference = left.eval(env);
+    public IValue eval(Environment<IValue> env) {
+        VCell reference = (VCell) left.eval(env);
+        IValue value = right.eval(env);
 
-        if (!(reference instanceof VCell)) {
-            throw new InvalidTypeException(VCell.TYPE, reference.showType());
+        reference.set(value);
+        return value;
+    }
+
+    public IType typecheck(Environment<IType> env) throws TypeException {
+        IType ref = left.typecheck(env);
+
+        if (!(ref instanceof TRef)) {
+            throw new TypeException(
+                String.format(
+                    "Expected an expression of type 'ref' but found and expression of type '%s' instead.", ref.show()
+                )
+            );
         }
 
-        IValue value = right.eval(env);
-        ((VCell) reference).set(value);
-        return value;
+        IType expected = ((TRef) ref).getType();
+        IType actual = right.typecheck(env);
+
+        if (!(actual.equals(expected))) {
+            throw new TypeException(expected, actual);
+        }
+        return actual;
     }
 }

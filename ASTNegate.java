@@ -5,16 +5,17 @@ public class ASTNegate implements ASTNode {
         this.node = node;
     }
 
-    public IValue eval(Environment env) throws ArgumentsNumberMismatchException,
-                                               InvalidTypeException,
-                                               NameAlreadyDefinedException,
-                                               NameNotDefinedException
-    {
-        IValue value = node.eval(env);
+    public IValue eval(Environment<IValue> env) {
+        VInt value = (VInt) node.eval(env);
+        return new VInt(-(value.getValue()));
+    }
 
-        if (!(value instanceof VInt)) {
-            throw new InvalidTypeException(VInt.TYPE, value.showType());
+    public IType typecheck(Environment<IType> env) throws TypeException {
+        IType type = node.typecheck(env);
+
+        if (!(type instanceof TInt)) {
+            throw new TypeException(TInt.getInstance(), type);
         }
-        return new VInt(-((VInt) value).getValue());
+        return type;
     }
 }

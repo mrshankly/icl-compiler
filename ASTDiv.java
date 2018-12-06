@@ -6,20 +6,26 @@ public class ASTDiv implements ASTNode {
         this.right = right;
     }
 
-    public IValue eval(Environment env) throws ArgumentsNumberMismatchException,
-                                               InvalidTypeException,
-                                               NameAlreadyDefinedException,
-                                               NameNotDefinedException
-    {
-        IValue v1 = left.eval(env);
-        IValue v2 = right.eval(env);
+    public IValue eval(Environment<IValue> env) {
+        VInt v1 = (VInt) left.eval(env);
+        VInt v2 = (VInt) right.eval(env);
 
-        if (!(v1 instanceof VInt)) {
-            throw new InvalidTypeException(VInt.TYPE, v1.showType());
+        if (v2.getValue() == 0) {
+            throw new DivisionByZeroException("Division by zero.");
         }
-        if (!(v2 instanceof VInt)) {
-            throw new InvalidTypeException(VInt.TYPE, v2.showType());
+        return new VInt(v1.getValue() / v2.getValue());
+    }
+
+    public IType typecheck(Environment<IType> env) throws TypeException {
+        IType t1 = left.typecheck(env);
+        IType t2 = right.typecheck(env);
+
+        if (!(t1 instanceof TInt)) {
+            throw new TypeException(TInt.getInstance(), t1);
         }
-        return new VInt(((VInt) v1).getValue() / ((VInt) v2).getValue());
+        if (!(t2 instanceof TInt)) {
+            throw new TypeException(TInt.getInstance(), t2);
+        }
+        return t1;
     }
 }

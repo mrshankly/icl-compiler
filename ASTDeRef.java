@@ -5,16 +5,21 @@ public class ASTDeRef implements ASTNode {
         this.expression = expression;
     }
 
-    public IValue eval(Environment env) throws ArgumentsNumberMismatchException,
-                                               InvalidTypeException,
-                                               NameAlreadyDefinedException,
-                                               NameNotDefinedException
-    {
-        IValue reference = expression.eval(env);
+    public IValue eval(Environment<IValue> env) {
+        VCell reference = (VCell) expression.eval(env);
+        return reference.get();
+    }
 
-        if (!(reference instanceof VCell)) {
-            throw new InvalidTypeException(VCell.TYPE, reference.showType());
+    public IType typecheck(Environment<IType> env) throws TypeException {
+        IType type = expression.typecheck(env);
+
+        if (!(type instanceof TRef)) {
+            throw new TypeException(
+                String.format(
+                    "Expected an expression of type 'ref' but found and expression of type '%s' instead.", type.show()
+                )
+            );
         }
-        return ((VCell) reference).get();
+        return ((TRef) type).getType();
     }
 }

@@ -1,4 +1,4 @@
-public class NameNotDefinedException extends Exception {
+public class NameNotDefinedException extends RuntimeException {
     public NameNotDefinedException() {
         super();
     }

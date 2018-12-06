@@ -10,23 +10,11 @@ public class ASTApply implements ASTNode {
         this.args = args;
     }
 
-    public IValue eval(Environment env) throws ArgumentsNumberMismatchException,
-                                               InvalidTypeException,
-                                               NameAlreadyDefinedException,
-                                               NameNotDefinedException
-    {
-        IValue v1 = lambda.eval(env);
-        if (!(v1 instanceof VClosure)) {
-            throw new InvalidTypeException(VClosure.TYPE, v1.showType());
-        }
-        VClosure closure = (VClosure)v1;
-
+    public IValue eval(Environment<IValue> env) {
+        VClosure closure = (VClosure) lambda.eval(env);
         List<String> params = closure.getParams();
-        if (args.size() != params.size()) {
-            throw new ArgumentsNumberMismatchException(params.size(), args.size());
-        }
 
-        Environment innerEnv = closure.getEnvironment().beginScope();
+        Environment<IValue> innerEnv = closure.getEnvironment().beginScope();
         for (int i = 0; i < args.size(); i++) {
             innerEnv.assoc(params.get(i), args.get(i).eval(env));
         }
@@ -34,5 +22,35 @@ public class ASTApply implements ASTNode {
         IValue value = closure.getBody().eval(innerEnv);
         innerEnv.endScope();
         return value;
+    }
+
+    public IType typecheck(Environment<IType> env) throws TypeException {
+        IType lambdaType = lambda.typecheck(env);
+
+        if (!(lambdaType instanceof TClosure)) {
+            throw new TypeException(
+                String.format(
+                    "Expected an expression of type 'closure' but found and expression of type '%s' instead.",
+                    lambdaType.show()
+                )
+            );
+        }
+
+        List<IType> paramsTypes = ((TClosure) lambdaType).getParamsTypes();
+        if (args.size() != paramsTypes.size()) {
+            throw new TypeException(
+                "Function with arity of " + paramsTypes.size() + " applied to " + args.size() + " arguments."
+            );
+        }
+        for (int i = 0; i < args.size(); i++) {
+            IType expected = paramsTypes.get(i);
+            IType actual = args.get(i).typecheck(env);
+
+            if (!(actual.equals(expected))) {
+                throw new TypeException(expected, actual);
+            }
+        }
+
+        return ((TClosure) lambdaType).getReturnType();
     }
 }

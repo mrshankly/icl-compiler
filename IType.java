@@ -1,3 +1,3 @@
-public interface IValue {
+public interface IType {
     public String show();
 }

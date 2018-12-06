@@ -1,6 +1,4 @@
 public class VBool implements IValue {
-    public static final String TYPE = "bool";
-
     private boolean value;
 
     public VBool(boolean value) {
@@ -14,11 +12,6 @@ public class VBool implements IValue {
     @Override
     public String show() {
         return String.format("%s", value ? "true" : "false");
-    }
-
-    @Override
-    public String showType() {
-        return TYPE;
     }
 
     @Override

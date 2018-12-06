@@ -11,27 +11,33 @@ public class Parser {
 
         Parser parser;
         ASTNode expression;
+        IType type;
         IValue value;
 
         if (args.length == 0) {
             // REPL mode.
             parser = new Parser(System.in);
+            Environment<IValue> evalEnv = new Environment<IValue>();
+            Environment<IType> typeEnv = new Environment<IType>();
 
             while (true) {
+                // Print prompt.
+                System.out.print("> ");
+
                 try {
                     expression = parser.Start();
-                    value = expression.eval(new Environment());
-                    System.out.println(value.show());
+                    type = expression.typecheck(typeEnv);
+                    value = expression.eval(evalEnv);
+                    System.out.println(value.show() + " : " + type.show());
                 } catch (ParseException e) {
-                    System.err.println("Syntax error.");
+                    System.err.printf("Syntax error: %s\n", formatSyntaxErrorMessage(e));
                     parser.ReInit(System.in);
-                } catch (Exception e) {
-                    String errorMsg = e.getMessage();
-                    if (errorMsg != null) {
-                        System.err.println(errorMsg);
-                    } else {
-                        e.printStackTrace();
-                    }
+                } catch (TypeException e) {
+                    System.err.println("Error: " + e.getMessage());
+                } catch (NameNotDefinedException e) {
+                    System.err.println("Runtime error: " + e.getMessage());
+                } catch (DivisionByZeroException e) {
+                    System.err.println("Runtime error: " + e.getMessage());
                 }
             }
 
@@ -46,22 +52,31 @@ public class Parser {
 
             try {
                 expression = parser.Start();
-                value = expression.eval(new Environment());
+                expression.typecheck(new Environment<IType>());
+                value = expression.eval(new Environment<IValue>());
                 System.out.println(value.show());
             } catch (ParseException e) {
-                System.err.println("Syntax error.");
-            } catch (Exception e) {
-                String errorMsg = e.getMessage();
-                if (errorMsg != null) {
-                    System.err.println(errorMsg);
-                } else {
-                    e.printStackTrace();
-                }
+                System.err.printf("Syntax error: %s\n", formatSyntaxErrorMessage(e));
+            } catch (TypeException e) {
+                System.err.println("Error: " + e.getMessage());
+            } catch (NameNotDefinedException e) {
+                System.err.println("Runtime error: " + e.getMessage());
+            } catch (DivisionByZeroException e) {
+                System.err.println("Runtime error: " + e.getMessage());
             }
 
         } else {
-            System.err.println("Usage: java Parser [<inout_file>]");
+            System.err.println("Usage: java Parser [<file>]");
         }
+    }
+
+    private static String formatSyntaxErrorMessage(ParseException e) {
+        return String.format(
+            "Unexpected token '%s' at line %d, column %d.",
+            e.currentToken.next.image,
+            e.currentToken.next.beginLine,
+            e.currentToken.next.beginColumn
+        );
     }
 }
 
@@ -77,7 +92,10 @@ SKIP :
 
 TOKEN :
 {
-  < IF : "if" >
+  < INT : "int" >
+| < BOOL : "bool" >
+| < REF : "ref" >
+| < IF : "if" >
 | < THEN : "then" >
 | < ELSE : "else" >
 | < NEW : "new" >
@@ -106,6 +124,7 @@ TOKEN :
 | < LPAR : "(" >
 | < RPAR : ")" >
 | < COMMA : "," >
+| < COLON : ":" >
 | < SEQ : ";" >
 | < DEREF : "!" >
 | < EL : ";;" >
@@ -220,8 +239,8 @@ ASTNode AddSub() :
   ASTNode t1, t2;
 }
 {
-  t1=MulDiv()
-  ( (op=<PLUS> | op=<MINUS>) t2=MulDiv()
+  t1=Term()
+  ( (op=<PLUS> | op=<MINUS>) t2=Term()
     {
       if (op.kind == PLUS) {
         t1 = new ASTAdd(t1, t2);
@@ -233,7 +252,7 @@ ASTNode AddSub() :
   { return t1; }
 }
 
-ASTNode MulDiv() :
+ASTNode Term() :
 {
   Token op;
   ASTNode t1, t2;
@@ -297,12 +316,44 @@ ASTNode FunctionCall() :
   { return t1; }
 }
 
+IType Type() :
+{
+  Token n;
+  IType t;
+  List<IType> args_types = new ArrayList<IType>();
+}
+{
+  (
+    n=<INT>
+    { t = TInt.getInstance(); }
+  |
+    n=<BOOL>
+    { t = TBool.getInstance(); }
+  |
+    n=<REF> t=Type()
+    { t = new TRef(t); }
+  |
+    <LPAR>
+    (
+      t=Type() { args_types.add(t); }
+      (
+        <COMMA> t=Type() { args_types.add(t); }
+      )*
+    )?
+    <RPAR> t=Type()
+    { t = new TClosure(args_types, t); }
+  )
+  { return t; }
+}
+
 ASTNode Factor() :
 {
   Token n;
+  IType type;
   ASTNode t1, t2, t3;
   List<String> ids = new ArrayList<String>();
   List<ASTNode> init_exprs = new ArrayList<ASTNode>();
+  List<IType> types_list = new ArrayList<IType>();
 }
 {
   (
@@ -323,25 +374,37 @@ ASTNode Factor() :
   |
     <LET>
     (
-      n=<ID> <ASSIGN> t1=Expression()
+      n=<ID> <COLON> type=Type() <ASSIGN> t1=Expression()
       {
         ids.add(n.image);
         init_exprs.add(t1);
+        types_list.add(type);
       }
     )+
-    <IN> t2=Expression() <END>
-    { t1 = new ASTLet(ids, init_exprs, t2); }
+    { t2 = null; }
+    (
+      <IN> t2=Expression()
+    )?
+    <END>
+    { t1 = new ASTLet(ids, init_exprs, types_list, t2); }
   |
     <FUN>
     (
-      n=<ID> { ids.add(n.image); }
+      n=<ID> <COLON> type=Type()
+      {
+        ids.add(n.image);
+        types_list.add(type);
+      }
       (
-        <COMMA> n=<ID>
-        { ids.add(n.image); }
+        <COMMA> n=<ID> <COLON> type=Type()
+        {
+          ids.add(n.image);
+          types_list.add(type);
+        }
       )*
     )?
     <ARROW> t1=Expression() <END>
-    { t1 = new ASTFun(ids, t1); }
+    { t1 = new ASTFun(ids, types_list, t1); }
   |
     <LPAR> t1=Expression() <RPAR>
   )

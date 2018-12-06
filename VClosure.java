@@ -2,13 +2,11 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class VClosure implements IValue {
-    public static final String TYPE = "closure";
-
     private List<String> params;
     private ASTNode body;
-    private Environment env;
+    private Environment<IValue> env;
 
-    public VClosure(List<String> params, ASTNode body, Environment env) {
+    public VClosure(List<String> params, ASTNode body, Environment<IValue> env) {
         this.params = params;
         this.body = body;
         this.env = env;
@@ -22,18 +20,13 @@ public class VClosure implements IValue {
         return body;
     }
 
-    public Environment getEnvironment() {
+    public Environment<IValue> getEnvironment() {
         return env;
     }
 
     @Override
     public String show() {
-        return String.format("Closure[%d]", params.size());
-    }
-
-    @Override
-    public String showType() {
-        return TYPE;
+        return String.format("closure[%d]", params.size());
     }
 
     @Override

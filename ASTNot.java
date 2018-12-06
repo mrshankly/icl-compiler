@@ -5,16 +5,17 @@ public class ASTNot implements ASTNode {
         this.node = node;
     }
 
-    public IValue eval(Environment env) throws ArgumentsNumberMismatchException,
-                                               InvalidTypeException,
-                                               NameAlreadyDefinedException,
-                                               NameNotDefinedException
-    {
-        IValue value = node.eval(env);
+    public IValue eval(Environment<IValue> env) {
+        VBool value = (VBool) node.eval(env);
+        return new VBool(!(value.getValue()));
+    }
 
-        if (!(value instanceof VBool)) {
-            throw new InvalidTypeException(VBool.TYPE, value.showType());
+    public IType typecheck(Environment<IType> env) throws TypeException {
+        IType type = node.typecheck(env);
+
+        if (!(type instanceof TBool)) {
+            throw new TypeException(TBool.getInstance(), type);
         }
-        return new VBool(!((VBool) value).getValue());
+        return type;
     }
 }

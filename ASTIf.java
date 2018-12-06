@@ -7,20 +7,29 @@ public class ASTIf implements ASTNode {
         this.falseExpression = falseExpression;
     }
 
-    public IValue eval(Environment env) throws ArgumentsNumberMismatchException,
-                                               InvalidTypeException,
-                                               NameAlreadyDefinedException,
-                                               NameNotDefinedException
-    {
-        IValue v1 = condition.eval(env);
+    public IValue eval(Environment<IValue> env) {
+        VBool cond = (VBool) condition.eval(env);
 
-        if (!(v1 instanceof VBool)) {
-            throw new InvalidTypeException(VBool.TYPE, v1.showType());
-        }
-        if (((VBool) v1).getValue()) {
+        if (cond.getValue()) {
             return trueExpression.eval(env);
         } else {
             return falseExpression.eval(env);
         }
+    }
+
+    public IType typecheck(Environment<IType> env) throws TypeException {
+        IType conditionType = condition.typecheck(env);
+
+        if (!(conditionType instanceof TBool)) {
+            throw new TypeException(TBool.getInstance(), conditionType);
+        }
+
+        IType trueType = trueExpression.typecheck(env);
+        IType falseType = falseExpression.typecheck(env);
+
+        if (!(trueType.equals(falseType))) {
+            throw new TypeException(trueType, falseType);
+        }
+        return trueType;
     }
 }

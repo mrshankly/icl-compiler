@@ -6,20 +6,23 @@ public class ASTAnd implements ASTNode {
         this.right = right;
     }
 
-    public IValue eval(Environment env) throws ArgumentsNumberMismatchException,
-                                               InvalidTypeException,
-                                               NameAlreadyDefinedException,
-                                               NameNotDefinedException
-    {
-        IValue v1 = left.eval(env);
-        IValue v2 = right.eval(env);
+    public IValue eval(Environment<IValue> env) {
+        VBool v1 = (VBool) left.eval(env);
+        VBool v2 = (VBool) right.eval(env);
 
-        if (!(v1 instanceof VBool)) {
-            throw new InvalidTypeException(VBool.TYPE, v1.showType());
+        return new VBool(v1.getValue() && v2.getValue());
+    }
+
+    public IType typecheck(Environment<IType> env) throws TypeException {
+        IType t1 = left.typecheck(env);
+        IType t2 = right.typecheck(env);
+
+        if (!(t1 instanceof TBool)) {
+            throw new TypeException(TBool.getInstance(), t1);
         }
-        if (!(v2 instanceof VBool)) {
-            throw new InvalidTypeException(VBool.TYPE, v2.showType());
+        if (!(t2 instanceof TBool)) {
+            throw new TypeException(TBool.getInstance(), t2);
         }
-        return new VBool(((VBool) v1).getValue() && ((VBool) v2).getValue());
+        return t1;
     }
 }

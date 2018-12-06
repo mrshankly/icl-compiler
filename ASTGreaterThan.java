@@ -6,20 +6,23 @@ public class ASTGreaterThan implements ASTNode {
         this.right = right;
     }
 
-    public IValue eval(Environment env) throws ArgumentsNumberMismatchException,
-                                               InvalidTypeException,
-                                               NameAlreadyDefinedException,
-                                               NameNotDefinedException
-    {
-        IValue v1 = left.eval(env);
-        IValue v2 = right.eval(env);
+    public IValue eval(Environment<IValue> env) {
+        VInt v1 = (VInt) left.eval(env);
+        VInt v2 = (VInt) right.eval(env);
 
-        if (!(v1 instanceof VInt)) {
-            throw new InvalidTypeException(VInt.TYPE, v1.showType());
+        return new VBool(v1.getValue() > v2.getValue());
+    }
+
+    public IType typecheck(Environment<IType> env) throws TypeException {
+        IType t1 = left.typecheck(env);
+        IType t2 = right.typecheck(env);
+
+        if (!(t1 instanceof TInt)) {
+            throw new TypeException(TInt.getInstance(), t1);
         }
-        if (!(v2 instanceof VInt)) {
-            throw new InvalidTypeException(VInt.TYPE, v2.showType());
+        if (!(t2 instanceof TInt)) {
+            throw new TypeException(TInt.getInstance(), t2);
         }
-        return new VBool(((VInt) v1).getValue() > ((VInt) v2).getValue());
+        return TBool.getInstance();
     }
 }

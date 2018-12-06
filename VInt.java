@@ -1,6 +1,4 @@
 public class VInt implements IValue {
-    public static final String TYPE = "int";
-
     private int value;
 
     public VInt(int value) {
@@ -14,11 +12,6 @@ public class VInt implements IValue {
     @Override
     public String show() {
         return String.format("%d", value);
-    }
-
-    @Override
-    public String showType() {
-        return TYPE;
     }
 
     @Override

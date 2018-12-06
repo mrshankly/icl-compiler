@@ -1,6 +1,4 @@
 public class VCell implements IValue {
-    public static final String TYPE = "reference";
-
     private IValue value;
 
     public VCell(IValue value) {
@@ -17,12 +15,7 @@ public class VCell implements IValue {
 
     @Override
     public String show() {
-        return String.format("Ref[%s]", value.show());
-    }
-
-    @Override
-    public String showType() {
-        return TYPE;
+        return String.format("ref[%s]", value.show());
     }
 
     @Override

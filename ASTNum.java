@@ -5,7 +5,11 @@ public class ASTNum implements ASTNode {
         this.value = value;
     }
 
-    public IValue eval(Environment env) {
+    public IValue eval(Environment<IValue> env) {
         return new VInt(value);
+    }
+
+    public IType typecheck(Environment<IType> env) {
+        return TInt.getInstance();
     }
 }

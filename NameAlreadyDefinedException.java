@@ -1,4 +1,4 @@
-public class NameAlreadyDefinedException extends Exception {
+public class NameAlreadyDefinedException extends RuntimeException {
     public NameAlreadyDefinedException() {
         super();
     }

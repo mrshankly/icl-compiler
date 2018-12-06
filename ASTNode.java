@@ -1,6 +1,4 @@
 public interface ASTNode {
-    public IValue eval(Environment env) throws ArgumentsNumberMismatchException,
-                                               InvalidTypeException,
-                                               NameAlreadyDefinedException,
-                                               NameNotDefinedException;
+    IValue eval(Environment<IValue> env);
+    IType typecheck(Environment<IType> env) throws TypeException;
 }

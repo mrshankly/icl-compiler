@@ -1,40 +1,40 @@
 import java.util.List;
 import java.util.ArrayList;
 
-public class Environment {
+public class Environment<T> {
 
-    private class Binding {
-        public final String name;
-        public final IValue value;
+    private class Binding<T> {
+        public String name;
+        public T value;
 
-        public Binding(String name, IValue value) {
+        public Binding(String name, T value) {
             this.name = name;
             this.value = value;
         }
     }
 
-    private List<Binding> bindings;
-    private Environment parent;
+    private List<Binding<T>> bindings;
+    private Environment<T> parent;
 
     public Environment() {
         this(null);
     }
 
-    public Environment(Environment parent) {
-        this.bindings = new ArrayList<Binding>(10);
+    public Environment(Environment<T> parent) {
+        this.bindings = new ArrayList<Binding<T>>(10);
         this.parent = parent;
     }
 
-    public Environment beginScope() {
-        return new Environment(this);
+    public Environment<T> beginScope() {
+        return new Environment<T>(this);
     }
 
-    public Environment endScope() {
+    public Environment<T> endScope() {
         return parent;
     }
 
-    private Binding getBinding(String name) {
-        for (Binding bind : bindings) {
+    private Binding<T> getBinding(String name) {
+        for (Binding<T> bind : bindings) {
             if (bind.name.equals(name)) {
                 return bind;
             }
@@ -42,23 +42,32 @@ public class Environment {
         return null;
     }
 
-    public void assoc(String name, IValue value) throws NameAlreadyDefinedException {
+    public void assoc(String name, T value) {
         if (getBinding(name) != null) {
-            throw new NameAlreadyDefinedException("Error: Name '" + name + "' is already defined.");
+            throw new NameAlreadyDefinedException("Name '" + name + "' is already defined.");
         }
-        bindings.add(new Binding(name, value));
+        bindings.add(new Binding<T>(name, value));
     }
 
-    public IValue find(String name) throws NameNotDefinedException {
-        Environment env = this;
+    public void smash(String name, T value) {
+        Binding<T> bind = getBinding(name);
+
+        if (bind == null) {
+            throw new NameNotDeclaredException("Missing declaration for name '" + name + "'.");
+        }
+        bind.value = value;
+    }
+
+    public T find(String name) {
+        Environment<T> env = this;
 
         while (env != null) {
-            Binding bind = env.getBinding(name);
+            Binding<T> bind = env.getBinding(name);
             if (bind != null) {
                 return bind.value;
             }
             env = env.parent;
         }
-        throw new NameNotDefinedException("Error: Name '" + name + "' is undefined.");
+        throw new NameNotDeclaredException("Missing declaration for name '" + name + "'.");
     }
 }
