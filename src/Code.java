@@ -38,6 +38,10 @@ public class Code {
             }
             instruction = String.format("%s%s; %s", instruction, whitespace, comment);
         }
+        // Add a tab if instruction is not a directive.
+        if (instruction.length() > 0 && instruction.charAt(0) != '.') {
+            instruction = "\t" + instruction;
+        }
         code.append(instruction + "\n");
     }
 
