@@ -22,6 +22,8 @@ public class ASTWhile implements ASTNode {
         if (!(conditionType instanceof TBool)) {
             throw new TypeException(TBool.getInstance(), conditionType);
         }
+        expression.typecheck(env);
+
         return conditionType;
     }
 
