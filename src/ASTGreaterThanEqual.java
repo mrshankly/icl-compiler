@@ -25,4 +25,7 @@ public class ASTGreaterThanEqual implements ASTNode {
         }
         return TBool.getInstance();
     }
+
+    public void compile() {
+    }
 }

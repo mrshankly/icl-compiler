@@ -7,7 +7,7 @@ import java.io.FileNotFoundException;
 
 public class Parser {
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws java.io.IOException {
 
         Parser parser;
         ASTNode expression;
@@ -42,28 +42,29 @@ public class Parser {
             }
 
         } else if (args.length == 1) {
-            // Read input from file.
+            // Compiler mode.
             try {
                 parser = new Parser(new FileInputStream(args[0]));
+                expression = parser.Start();
+                expression.typecheck(new Environment<IType>());
             } catch(FileNotFoundException e) {
                 System.err.printf("File '%s' not found.\n", args[0]);
                 return;
-            }
-
-            try {
-                expression = parser.Start();
-                expression.typecheck(new Environment<IType>());
-                value = expression.eval(new Environment<IValue>());
-                System.out.println(value.show());
             } catch (ParseException e) {
                 System.err.printf("Syntax error: %s\n", formatSyntaxErrorMessage(e));
+                return;
             } catch (TypeException e) {
                 System.err.println("Error: " + e.getMessage());
-            } catch (NameNotDefinedException e) {
-                System.err.println("Runtime error: " + e.getMessage());
-            } catch (DivisionByZeroException e) {
-                System.err.println("Runtime error: " + e.getMessage());
+                return;
             }
+
+            String classname = removeExtension(args[0]);
+            Code mainCode = Code.getMain();
+
+            mainCode.emitIntro(classname);
+            expression.compile();
+            mainCode.emitEpilogue();
+            mainCode.dump(classname + ".j");
 
         } else {
             System.err.println("Usage: java Parser [<file>]");
@@ -77,6 +78,13 @@ public class Parser {
             e.currentToken.next.beginLine,
             e.currentToken.next.beginColumn
         );
+    }
+
+    private static String removeExtension(String s) {
+        if (s.indexOf(".") > 0) {
+            return s.substring(0, s.lastIndexOf("."));
+        }
+        return s;
     }
 }
 

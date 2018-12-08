@@ -21,4 +21,7 @@ public class ASTId implements ASTNode {
             throw new TypeException(e.getMessage());
         }
     }
+
+    public void compile() {
+    }
 }

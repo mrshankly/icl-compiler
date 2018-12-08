@@ -12,4 +12,8 @@ public class ASTNum implements ASTNode {
     public IType typecheck(Environment<IType> env) {
         return TInt.getInstance();
     }
+
+    public void compile() {
+        Code.getMain().emit("sipush " + value);
+    }
 }

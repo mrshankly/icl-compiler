@@ -18,4 +18,7 @@ public class ASTNot implements ASTNode {
         }
         return type;
     }
+
+    public void compile() {
+    }
 }

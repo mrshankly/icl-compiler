@@ -53,4 +53,7 @@ public class ASTApply implements ASTNode {
 
         return ((TClosure) lambdaType).getReturnType();
     }
+
+    public void compile() {
+    }
 }

@@ -25,4 +25,7 @@ public class ASTAnd implements ASTNode {
         }
         return t1;
     }
+
+    public void compile() {
+    }
 }

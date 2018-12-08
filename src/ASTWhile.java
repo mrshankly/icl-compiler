@@ -24,4 +24,7 @@ public class ASTWhile implements ASTNode {
         }
         return conditionType;
     }
+
+    public void compile() {
+    }
 }

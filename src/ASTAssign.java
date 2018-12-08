@@ -33,4 +33,7 @@ public class ASTAssign implements ASTNode {
         }
         return actual;
     }
+
+    public void compile() {
+    }
 }

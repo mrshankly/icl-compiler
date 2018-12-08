@@ -31,4 +31,7 @@ public class ASTFun implements ASTNode {
 
         return new TClosure(paramsTypes, ret);
     }
+
+    public void compile() {
+    }
 }

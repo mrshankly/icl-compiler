@@ -79,4 +79,7 @@ public class ASTLet implements ASTNode {
         }
         return type;
     }
+
+    public void compile() {
+    }
 }

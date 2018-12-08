@@ -25,4 +25,10 @@ public class ASTAdd implements ASTNode {
         }
         return t1;
     }
+
+    public void compile() {
+        left.compile();
+        right.compile();
+        Code.getMain().emit("iadd");
+    }
 }

@@ -15,4 +15,7 @@ public class ASTSeq implements ASTNode {
         expression1.typecheck(env);
         return expression2.typecheck(env);
     }
+
+    public void compile() {
+    }
 }

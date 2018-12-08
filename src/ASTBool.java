@@ -12,4 +12,7 @@ public class ASTBool implements ASTNode {
     public IType typecheck(Environment<IType> env) {
         return TBool.getInstance();
     }
+
+    public void compile() {
+    }
 }

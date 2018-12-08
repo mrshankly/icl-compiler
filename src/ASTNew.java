@@ -12,4 +12,7 @@ public class ASTNew implements ASTNode {
     public IType typecheck(Environment<IType> env) throws TypeException {
         return new TRef(expression.typecheck(env));
     }
+
+    public void compile() {
+    }
 }

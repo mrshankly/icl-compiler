@@ -22,4 +22,7 @@ public class ASTNotEquals implements ASTNode {
         }
         return TBool.getInstance();
     }
+
+    public void compile() {
+    }
 }

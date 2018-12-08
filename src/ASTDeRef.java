@@ -22,4 +22,7 @@ public class ASTDeRef implements ASTNode {
         }
         return ((TRef) type).getType();
     }
+
+    public void compile() {
+    }
 }

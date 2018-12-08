@@ -24,4 +24,7 @@ public class ASTOr implements ASTNode {
         }
         return TBool.getInstance();
     }
+
+    public void compile() {
+    }
 }

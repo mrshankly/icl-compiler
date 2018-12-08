@@ -32,4 +32,7 @@ public class ASTIf implements ASTNode {
         }
         return trueType;
     }
+
+    public void compile() {
+    }
 }
