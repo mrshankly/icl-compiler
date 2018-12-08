@@ -389,11 +389,7 @@ ASTNode Factor() :
         types_list.add(type);
       }
     )+
-    { t2 = null; }
-    (
-      <IN> t2=Expression()
-    )?
-    <END>
+    <IN> t2=Expression() <END>
     { t1 = new ASTLet(ids, init_exprs, types_list, t2); }
   |
     <FUN>

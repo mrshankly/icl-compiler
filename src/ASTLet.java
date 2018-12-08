@@ -15,68 +15,44 @@ public class ASTLet implements ASTNode {
     }
 
     public IValue eval(Environment<IValue> env) {
-        IValue value = null;
-        Environment<IValue> bodyEnv = (body == null) ? env : env.beginScope();
+        Environment<IValue> bodyEnv = env.beginScope();
 
         for (String name : names) {
             bodyEnv.assoc(name, VUndefined.getInstance());
         }
         for (int i = 0; i < names.size(); i++) {
-            value = initExprs.get(i).eval(bodyEnv);
-            bodyEnv.smash(names.get(i), value);
-        }
-        if (body != null) {
-            value = body.eval(bodyEnv);
-            bodyEnv.endScope();
+            IValue v = initExprs.get(i).eval(bodyEnv);
+            bodyEnv.smash(names.get(i), v);
         }
 
-        if (value == null) {
-            throw new RuntimeException("No return value for let expression.");
-        }
+        IValue value = body.eval(bodyEnv);
+        bodyEnv.endScope();
+
         return value;
     }
 
     public IType typecheck(Environment<IType> env) throws TypeException {
-        IType type = null;
-        Environment<IType> bodyEnv = (body == null) ? env : env.beginScope();
-
-        // Create a temporary environment to check that the types in initTypes
-        // match the types of the ASTNodes in initExprs. We need this temporary
-        // environment so we don't polute the top level environment (when body
-        // is null) in case there is a type error.
-        Environment<IType> tempEnv = bodyEnv.beginScope();
+        Environment<IType> bodyEnv = env.beginScope();
 
         try {
-            for (int i = 0; i < initTypes.size(); i++) {
-                IType expected = initTypes.get(i);
-                tempEnv.assoc(names.get(i), expected);
-
-                IType actual = initExprs.get(i).typecheck(tempEnv);
-                if (!(actual.equals(expected))) {
-                    throw new TypeException(expected, actual);
-                }
+            for (int i = 0; i < names.size(); i++) {
+                bodyEnv.assoc(names.get(i), initTypes.get(i));
             }
         } catch (NameAlreadyDefinedException e) {
             throw new TypeException(e.getMessage());
-        } finally {
-            tempEnv.endScope();
-            tempEnv = null;
+        }
+        // Check that the types of the init expressions match the types given.
+        for (int i = 0; i < initExprs.size(); i++) {
+            IType expected = initTypes.get(i);
+            IType actual = initExprs.get(i).typecheck(bodyEnv);
+            if (!(actual.equals(expected))) {
+                throw new TypeException(expected, actual);
+            }
         }
 
-        // The ASTNodes in initExprs typecheck to the types in initTypes, we can
-        // safely do the assoc operation in bodyEnv for each name.
-        for (int i = 0; i < initTypes.size(); i++) {
-            type = initTypes.get(i);
-            bodyEnv.assoc(names.get(i), type);
-        }
-        if (body != null) {
-            type = body.typecheck(bodyEnv);
-            bodyEnv.endScope();
-        }
+        IType type = body.typecheck(bodyEnv);
+        bodyEnv.endScope();
 
-        if (type == null) {
-            throw new RuntimeException("No type for let expression.");
-        }
         return type;
     }
 
