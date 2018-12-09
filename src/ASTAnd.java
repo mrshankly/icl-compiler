@@ -27,5 +27,21 @@ public class ASTAnd implements ASTNode {
     }
 
     public void compile() {
+        Code mainCode = Code.getMain();
+
+        left.compile();
+        String l1 = mainCode.getNewLabel();
+        mainCode.emit("ifeq " + l1);
+
+        right.compile();
+        mainCode.emit("ifeq " + l1);
+
+        mainCode.emit("iconst_1");
+        String l2 = mainCode.getNewLabel();
+        mainCode.emit("goto " + l2);
+
+        mainCode.emit(l1 + ":");
+        mainCode.emit("iconst_0");
+        mainCode.emit(l2 + ":");
     }
 }
