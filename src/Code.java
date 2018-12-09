@@ -4,14 +4,15 @@ import java.io.IOException;
 
 public class Code {
     private static final int INITIAL_CAPACITY = 1000;
-    private static final int COMMENT_COLUMN = 81;
 
     private static Code mainInstance = null;
 
     private StringBuilder code;
+    private int label;
 
     public Code() {
         code = new StringBuilder(INITIAL_CAPACITY);
+        label = 1;
     }
 
     public static Code getMain() {
@@ -21,25 +22,15 @@ public class Code {
         return mainInstance;
     }
 
-    public void emit(String instruction) {
-        emit(instruction, null);
+    public String getNewLabel() {
+        return "L" + label++;
     }
 
-    public void emit(String instruction, String comment) {
-        // Align comment if any is given.
-        if (comment != null) {
-            int whitespaceLength = COMMENT_COLUMN - 1 - instruction.length();
-            if (whitespaceLength < 1) {
-                whitespaceLength = 1;
-            }
-            StringBuilder whitespace = new StringBuilder(whitespaceLength);
-            for (int i = 0; i < whitespaceLength; i++) {
-                whitespace.append(' ');
-            }
-            instruction = String.format("%s%s; %s", instruction, whitespace, comment);
+    public void emit(String instruction) {
+        if (instruction == null || instruction.length() == 0) {
+            return;
         }
-        // Add a tab if instruction is not a directive.
-        if (instruction.length() > 0 && instruction.charAt(0) != '.') {
+        if (!isDirective(instruction) && !isLabel(instruction)) {
             instruction = "\t" + instruction;
         }
         code.append(instruction + "\n");
@@ -86,5 +77,16 @@ public class Code {
         BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
         writer.append(code);
         writer.close();
+    }
+
+    // Helper functions.
+    private static boolean isDirective(String instruction) {
+        return instruction.charAt(0) == '.';
+    }
+
+    private static boolean isLabel(String instruction) {
+        char first = instruction.charAt(0);
+        char last = instruction.charAt(instruction.length() - 1);
+        return (first == 'L') && (last == ':');
     }
 }
