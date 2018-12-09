@@ -30,6 +30,10 @@ public class Parser {
                     value = expression.eval(evalEnv);
                     System.out.println(value.show() + " : " + type.show());
                 } catch (ParseException e) {
+                    // Check for EOF.
+                    if (e.currentToken.next.image == "") {
+                        return;
+                    }
                     System.err.printf("Syntax error: %s\n", formatSyntaxErrorMessage(e));
                     parser.ReInit(System.in);
                 } catch (TypeException e) {
