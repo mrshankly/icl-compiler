@@ -33,7 +33,6 @@ public class ASTLessThanEqual implements ASTNode {
         right.compile();
 
         String l1 = mainCode.getNewLabel();
-        
         mainCode.emit("if_icmple " + l1);
 
         mainCode.emit("iconst_0");
@@ -42,7 +41,7 @@ public class ASTLessThanEqual implements ASTNode {
 
         mainCode.emit(l1 + ":");
         mainCode.emit("iconst_1");
-        
+
         mainCode.emit(l2 + ":");
     }
 }

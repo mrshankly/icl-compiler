@@ -17,5 +17,8 @@ public class ASTSeq implements ASTNode {
     }
 
     public void compile() {
+        expression1.compile();
+        Code.getMain().emit("pop");
+        expression2.compile();
     }
 }

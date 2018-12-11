@@ -25,12 +25,11 @@ public class ASTEquals implements ASTNode {
 
     public void compile() {
         Code mainCode = Code.getMain();
-        
+
         left.compile();
         right.compile();
 
         String l1 = mainCode.getNewLabel();
-        
         mainCode.emit("if_icmpeq " + l1);
 
         mainCode.emit("iconst_0");
@@ -39,7 +38,7 @@ public class ASTEquals implements ASTNode {
 
         mainCode.emit(l1 + ":");
         mainCode.emit("iconst_1");
-        
+
         mainCode.emit(l2 + ":");
     }
 }
