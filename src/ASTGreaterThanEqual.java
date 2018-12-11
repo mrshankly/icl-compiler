@@ -35,7 +35,7 @@ public class ASTGreaterThanEqual implements ASTNode {
 
         String l1 = mainCode.getNewLabel();
         
-        mainCode.emit("if_icmpget " + l1);
+        mainCode.emit("if_icmpge " + l1);
 
         mainCode.emit("iconst_0");
         String l2 = mainCode.getNewLabel();

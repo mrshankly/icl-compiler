@@ -20,5 +20,12 @@ public class ASTNot implements ASTNode {
     }
 
     public void compile() {
+        Code mainCode = Code.getMain();
+
+        node.compile();
+        mainCode.emit("iconst_1");
+        String l1 = mainCode.getNewLabel();
+        
+        mainCode.emit("ixor");
     }
 }
