@@ -27,5 +27,23 @@ public class ASTGreaterThan implements ASTNode {
     }
 
     public void compile() {
+
+        Code mainCode = Code.getMain();
+
+        left.compile();
+        right.compile();
+
+        String l1 = mainCode.getNewLabel();
+        
+        mainCode.emit("if_icmpgt " + l1);
+
+        mainCode.emit("iconst_0");
+        String l2 = mainCode.getNewLabel();
+        mainCode.emit("goto " + l2);
+
+        mainCode.emit(l1 + ":");
+        mainCode.emit("iconst_1");
+        
+        mainCode.emit(l2 + ":");
     }
 }
