@@ -1,5 +1,5 @@
 public class ASTNegate implements ASTNode {
-  private ASTNode node;
+    private ASTNode node;
 
     public ASTNegate(ASTNode node) {
         this.node = node;
