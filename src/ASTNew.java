@@ -34,7 +34,11 @@ public class ASTNew implements ASTNode {
         if (code.startCode(classname + ".j")) {
             code.emit(".class " + classname);
             code.emit(".super java/lang/Object");
-            code.emit(".field public value " + jvmType + ";");
+            code.emit(".field public value " + jvmType);
+            code.emit(".method public <init>()V");
+            code.emit("aload_0");
+            code.emit("invokenonvirtual java/lang/Object/<init>()V");
+            code.emit("return");
             code.emit(".end method");
             code.endCode();
         }
