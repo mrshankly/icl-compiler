@@ -1,8 +1,10 @@
 public class ASTDeRef implements ASTNode {
     private ASTNode expression;
+    private IType type;
 
     public ASTDeRef(ASTNode expression) {
         this.expression = expression;
+        this.type = null;
     }
 
     public IValue eval(Environment<IValue> env) {
@@ -20,9 +22,24 @@ public class ASTDeRef implements ASTNode {
                 )
             );
         }
-        return ((TRef) type).getType();
+        this.type = ((TRef) type).getType();
+        return this.type;
     }
 
     public void compile() {
+        Code code = Code.getInstance();
+        String jvmType, classname;
+
+        if (type instanceof TInt || type instanceof TBool) {
+            classname = "ref_int";
+            jvmType = "I";
+        } else {
+            classname = "ref_obj";
+            jvmType = "Ljava/lang/Object";
+        }
+
+        expression.compile();
+        code.emit("checkcast " + classname);
+        code.emit("getfield " + classname + "/value " + jvmType);
     }
 }
