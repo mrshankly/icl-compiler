@@ -29,6 +29,6 @@ public class ASTAdd implements ASTNode {
     public void compile() {
         left.compile();
         right.compile();
-        Code.getMain().emit("iadd");
+        Code.getInstance().emit("iadd");
     }
 }

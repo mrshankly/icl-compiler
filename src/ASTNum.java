@@ -14,6 +14,6 @@ public class ASTNum implements ASTNode {
     }
 
     public void compile() {
-        Code.getMain().emit("sipush " + value);
+        Code.getInstance().emit("sipush " + value);
     }
 }

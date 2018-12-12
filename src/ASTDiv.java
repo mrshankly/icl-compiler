@@ -32,6 +32,6 @@ public class ASTDiv implements ASTNode {
     public void compile() {
         left.compile();
         right.compile();
-        Code.getMain().emit("idiv");
+        Code.getInstance().emit("idiv");
     }
 }

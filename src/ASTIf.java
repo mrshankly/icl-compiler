@@ -34,19 +34,19 @@ public class ASTIf implements ASTNode {
     }
 
     public void compile() {
-        Code mainCode = Code.getMain();
+        Code code = Code.getInstance();
 
         condition.compile();
-        String l1 = mainCode.getNewLabel();
-        mainCode.emit("ifeq " + l1);
+        String l1 = code.getNewLabel();
+        code.emit("ifeq " + l1);
 
         trueExpression.compile();
-        String l2 = mainCode.getNewLabel();
-        mainCode.emit("goto " + l2);
+        String l2 = code.getNewLabel();
+        code.emit("goto " + l2);
 
-        mainCode.emit(l1 + ":");
+        code.emit(l1 + ":");
         falseExpression.compile();
 
-        mainCode.emit(l2 + ":");
+        code.emit(l2 + ":");
     }
 }

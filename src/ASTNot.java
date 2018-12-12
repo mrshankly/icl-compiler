@@ -20,10 +20,10 @@ public class ASTNot implements ASTNode {
     }
 
     public void compile() {
-        Code mainCode = Code.getMain();
+        Code code = Code.getInstance();
 
         node.compile();
-        mainCode.emit("iconst_1");
-        mainCode.emit("ixor");
+        code.emit("iconst_1");
+        code.emit("ixor");
     }
 }

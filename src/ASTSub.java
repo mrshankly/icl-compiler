@@ -29,6 +29,6 @@ public class ASTSub implements ASTNode {
     public void compile() {
         left.compile();
         right.compile();
-        Code.getMain().emit("isub");
+        Code.getInstance().emit("isub");
     }
 }

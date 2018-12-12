@@ -28,19 +28,19 @@ public class ASTWhile implements ASTNode {
     }
 
     public void compile() {
-        Code mainCode = Code.getMain();
+        Code code = Code.getInstance();
 
-        String l1 = mainCode.getNewLabel();
-        mainCode.emit(l1 + ":");
+        String l1 = code.getNewLabel();
+        code.emit(l1 + ":");
         condition.compile();
-        String l2 = mainCode.getNewLabel();
-        mainCode.emit("ifeq " + l2);
+        String l2 = code.getNewLabel();
+        code.emit("ifeq " + l2);
 
         expression.compile();
-        mainCode.emit("pop");
-        mainCode.emit("goto " + l1);
+        code.emit("pop");
+        code.emit("goto " + l1);
 
-        mainCode.emit(l2 + ":");
-        mainCode.emit("iconst_0");
+        code.emit(l2 + ":");
+        code.emit("iconst_0");
     }
 }

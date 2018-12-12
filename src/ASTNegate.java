@@ -21,6 +21,6 @@ public class ASTNegate implements ASTNode {
 
     public void compile() {
         node.compile();
-        Code.getMain().emit("ineg");
+        Code.getInstance().emit("ineg");
     }
 }

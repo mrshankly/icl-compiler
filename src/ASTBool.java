@@ -14,6 +14,6 @@ public class ASTBool implements ASTNode {
     }
 
     public void compile() {
-        Code.getMain().emit(value ? "iconst_1" : "iconst_0");
+        Code.getInstance().emit(value ? "iconst_1" : "iconst_0");
     }
 }

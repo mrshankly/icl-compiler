@@ -63,7 +63,7 @@ public class Parser {
             }
 
             String classname = removeExtension(args[0]);
-            Code mainCode = Code.getMain();
+            Code mainCode = Code.getInstance();
 
             mainCode.emitIntro(classname);
             expression.compile();

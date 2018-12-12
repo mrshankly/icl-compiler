@@ -29,6 +29,6 @@ public class ASTMul implements ASTNode {
     public void compile() {
         left.compile();
         right.compile();
-        Code.getMain().emit("imul");
+        Code.getInstance().emit("imul");
     }
 }
