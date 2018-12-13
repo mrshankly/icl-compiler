@@ -13,6 +13,10 @@ public class ASTBool implements ASTNode {
         return TBool.getInstance();
     }
 
+    public IType getType() {
+        return TBool.getInstance();
+    }
+
     public void compile() {
         Code.getInstance().emit(value ? "iconst_1" : "iconst_0");
     }

@@ -13,6 +13,10 @@ public class ASTNum implements ASTNode {
         return TInt.getInstance();
     }
 
+    public IType getType() {
+        return TInt.getInstance();
+    }
+
     public void compile() {
         Code.getInstance().emit("sipush " + value);
     }

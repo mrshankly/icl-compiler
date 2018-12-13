@@ -17,8 +17,8 @@ public class ASTNew implements ASTNode {
     }
 
     public void compile() {
-        String classname;
-        String jvmType;
+        Code code = Code.getInstance();
+        String jvmType, classname;
 
         if (type instanceof TInt || type instanceof TBool) {
             classname = "ref_int";
@@ -27,8 +27,6 @@ public class ASTNew implements ASTNode {
             classname = "ref_obj";
             jvmType = "Ljava/lang/Object";
         }
-
-        Code code = Code.getInstance();
 
         // Create ref class if it doesn't already exist.
         if (code.startCode(classname + ".j")) {

@@ -33,8 +33,12 @@ public class ASTAssign implements ASTNode {
         if (!(actual.equals(expected))) {
             throw new TypeException(expected, actual);
         }
-        this.type = actual;
+        type = actual;
         return actual;
+    }
+
+    public IType getType() {
+        return type;
     }
 
     public void compile() {
