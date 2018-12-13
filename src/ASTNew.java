@@ -12,15 +12,20 @@ public class ASTNew implements ASTNode {
     }
 
     public IType typecheck(Environment<IType> env) throws TypeException {
-        type = expression.typecheck(env);
-        return new TRef(type);
+        type = new TRef(expression.typecheck(env));
+        return type;
+    }
+
+    public IType getType() {
+        return type;
     }
 
     public void compile() {
         Code code = Code.getInstance();
         String jvmType, classname;
+        IType refType = ((TRef) type).getType();
 
-        if (type instanceof TInt || type instanceof TBool) {
+        if (refType instanceof TInt || refType instanceof TBool) {
             classname = "ref_int";
             jvmType = "I";
         } else {

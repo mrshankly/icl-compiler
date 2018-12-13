@@ -1,8 +1,10 @@
 public class ASTNegate implements ASTNode {
     private ASTNode node;
+    private IType type;
 
     public ASTNegate(ASTNode node) {
         this.node = node;
+        this.type = null;
     }
 
     public IValue eval(Environment<IValue> env) {
@@ -11,11 +13,16 @@ public class ASTNegate implements ASTNode {
     }
 
     public IType typecheck(Environment<IType> env) throws TypeException {
-        IType type = node.typecheck(env);
+        IType t = node.typecheck(env);
 
-        if (!(type instanceof TInt)) {
-            throw new TypeException(TInt.getInstance(), type);
+        if (!(t instanceof TInt)) {
+            throw new TypeException(TInt.getInstance(), t);
         }
+        type = t;
+        return t;
+    }
+
+    public IType getType() {
         return type;
     }
 

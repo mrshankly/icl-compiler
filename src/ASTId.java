@@ -1,8 +1,10 @@
 public class ASTId implements ASTNode {
     private String name;
+    private IType type;
 
     public ASTId(String name) {
         this.name = name;
+        this.type = null;
     }
 
     public IValue eval(Environment<IValue> env) {
@@ -16,10 +18,15 @@ public class ASTId implements ASTNode {
 
     public IType typecheck(Environment<IType> env) throws TypeException {
         try {
-            return env.find(name);
+            type = env.find(name);
         } catch (NameNotDeclaredException e) {
             throw new TypeException(e.getMessage());
         }
+        return type;
+    }
+
+    public IType getType() {
+        return type;
     }
 
     public void compile() {

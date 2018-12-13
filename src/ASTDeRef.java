@@ -13,17 +13,21 @@ public class ASTDeRef implements ASTNode {
     }
 
     public IType typecheck(Environment<IType> env) throws TypeException {
-        IType type = expression.typecheck(env);
+        IType t = expression.typecheck(env);
 
-        if (!(type instanceof TRef)) {
+        if (!(t instanceof TRef)) {
             throw new TypeException(
                 String.format(
-                    "Expected an expression of type 'ref' but found and expression of type '%s' instead.", type.show()
+                    "Expected an expression of type 'ref' but found and expression of type '%s' instead.", t.show()
                 )
             );
         }
-        this.type = ((TRef) type).getType();
-        return this.type;
+        type = ((TRef) t).getType();
+        return type;
+    }
+
+    public IType getType() {
+        return type;
     }
 
     public void compile() {

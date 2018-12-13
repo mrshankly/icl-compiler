@@ -4,10 +4,12 @@ import java.util.ArrayList;
 public class ASTApply implements ASTNode {
     private ASTNode lambda;
     private List<ASTNode> args;
+    private IType type;
 
     public ASTApply(ASTNode lambda, List<ASTNode> args) {
         this.lambda = lambda;
         this.args = args;
+        this.type = null;
     }
 
     public IValue eval(Environment<IValue> env) {
@@ -51,7 +53,12 @@ public class ASTApply implements ASTNode {
             }
         }
 
-        return ((TClosure) lambdaType).getReturnType();
+        type = ((TClosure) lambdaType).getReturnType();
+        return type;
+    }
+
+    public IType getType() {
+        return type;
     }
 
     public void compile() {

@@ -1,9 +1,11 @@
 public class ASTOr implements ASTNode {
     private ASTNode left, right;
+    private IType type;
 
     public ASTOr(ASTNode left, ASTNode right) {
         this.left = left;
         this.right = right;
+        this.type = null;
     }
 
     public IValue eval(Environment<IValue> env) {
@@ -22,7 +24,12 @@ public class ASTOr implements ASTNode {
         if (!(t2 instanceof TBool)) {
             throw new TypeException(TBool.getInstance(), t2);
         }
-        return TBool.getInstance();
+        type = TBool.getInstance();
+        return type;
+    }
+
+    public IType getType() {
+        return type;
     }
 
     public void compile() {

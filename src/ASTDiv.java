@@ -1,9 +1,11 @@
 public class ASTDiv implements ASTNode {
     private ASTNode left, right;
+    private IType type;
 
     public ASTDiv(ASTNode left, ASTNode right) {
         this.left = left;
         this.right = right;
+        this.type = null;
     }
 
     public IValue eval(Environment<IValue> env) {
@@ -26,7 +28,12 @@ public class ASTDiv implements ASTNode {
         if (!(t2 instanceof TInt)) {
             throw new TypeException(TInt.getInstance(), t2);
         }
+        type = t1;
         return t1;
+    }
+
+    public IType getType() {
+        return type;
     }
 
     public void compile() {

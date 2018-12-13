@@ -1,9 +1,11 @@
 public class ASTLessThan implements ASTNode {
     private ASTNode left, right;
+    private IType type;
 
     public ASTLessThan(ASTNode left, ASTNode right) {
         this.left = left;
         this.right = right;
+        this.type = null;
     }
 
     public IValue eval(Environment<IValue> env) {
@@ -23,7 +25,12 @@ public class ASTLessThan implements ASTNode {
         if (!(t2 instanceof TInt)) {
             throw new TypeException(TInt.getInstance(), t2);
         }
-        return TBool.getInstance();
+        type = TBool.getInstance();
+        return type;
+    }
+
+    public IType getType() {
+        return type;
     }
 
     public void compile() {

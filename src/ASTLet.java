@@ -6,12 +6,14 @@ public class ASTLet implements ASTNode {
     private List<ASTNode> initExprs;
     private List<IType> initTypes;
     private ASTNode body;
+    private IType type;
 
     public ASTLet(List<String> names, List<ASTNode> initExprs, List<IType> initTypes, ASTNode body) {
         this.names = names;
         this.initExprs = initExprs;
         this.initTypes = initTypes;
         this.body = body;
+        this.type = null;
     }
 
     public IValue eval(Environment<IValue> env) {
@@ -50,9 +52,13 @@ public class ASTLet implements ASTNode {
             }
         }
 
-        IType type = body.typecheck(bodyEnv);
+        type = body.typecheck(bodyEnv);
         bodyEnv.endScope();
 
+        return type;
+    }
+
+    public IType getType() {
         return type;
     }
 

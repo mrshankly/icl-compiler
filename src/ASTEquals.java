@@ -1,5 +1,6 @@
 public class ASTEquals implements ASTNode {
     private ASTNode left, right;
+    private IType type;
 
     public ASTEquals(ASTNode left, ASTNode right) {
         this.left = left;
@@ -20,7 +21,12 @@ public class ASTEquals implements ASTNode {
         if (!(t1.equals(t2))) {
             throw new TypeException(t1, t2);
         }
-        return TBool.getInstance();
+        type = TBool.getInstance();
+        return type;
+    }
+
+    public IType getType() {
+        return type;
     }
 
     public void compile() {

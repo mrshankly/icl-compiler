@@ -1,8 +1,10 @@
 public class ASTNot implements ASTNode {
     private ASTNode node;
+    private IType type;
 
     public ASTNot(ASTNode node) {
         this.node = node;
+        this.type = null;
     }
 
     public IValue eval(Environment<IValue> env) {
@@ -11,11 +13,16 @@ public class ASTNot implements ASTNode {
     }
 
     public IType typecheck(Environment<IType> env) throws TypeException {
-        IType type = node.typecheck(env);
+        IType t = node.typecheck(env);
 
-        if (!(type instanceof TBool)) {
-            throw new TypeException(TBool.getInstance(), type);
+        if (!(t instanceof TBool)) {
+            throw new TypeException(TBool.getInstance(), t);
         }
+        type = t;
+        return t;
+    }
+
+    public IType getType() {
         return type;
     }
 

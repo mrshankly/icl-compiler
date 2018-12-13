@@ -1,10 +1,12 @@
 public class ASTIf implements ASTNode {
     private ASTNode condition, trueExpression, falseExpression;
+    private IType type;
 
     public ASTIf(ASTNode condition, ASTNode trueExpression, ASTNode falseExpression) {
         this.condition = condition;
         this.trueExpression = trueExpression;
         this.falseExpression = falseExpression;
+        this.type = null;
     }
 
     public IValue eval(Environment<IValue> env) {
@@ -30,7 +32,12 @@ public class ASTIf implements ASTNode {
         if (!(trueType.equals(falseType))) {
             throw new TypeException(trueType, falseType);
         }
+        type = trueType;
         return trueType;
+    }
+
+    public IType getType() {
+        return type;
     }
 
     public void compile() {

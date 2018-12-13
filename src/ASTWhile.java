@@ -1,9 +1,11 @@
 public class ASTWhile implements ASTNode {
     private ASTNode condition, expression;
+    private IType type;
 
     public ASTWhile(ASTNode condition, ASTNode expression) {
         this.condition = condition;
         this.expression = expression;
+        this.type = null;
     }
 
     public IValue eval(Environment<IValue> env) {
@@ -24,7 +26,12 @@ public class ASTWhile implements ASTNode {
         }
         expression.typecheck(env);
 
+        type = conditionType;
         return conditionType;
+    }
+
+    public IType getType() {
+        return type;
     }
 
     public void compile() {
