@@ -43,8 +43,8 @@ public class ASTAssign implements ASTNode {
 
     public void compile() {
         Code code = Code.getInstance();
-        String jvmType = code.getJVMType(type);
-        String classname = code.getRefClass(type);
+        String jvmType = Code.getJVMType(type);
+        String classname = Code.getRefClass(type);
 
         left.compile();
         code.emit("checkcast " + classname);

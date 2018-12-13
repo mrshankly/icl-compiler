@@ -63,5 +63,42 @@ public class ASTLet implements ASTNode {
     }
 
     public void compile() {
+        Code code = Code.getInstance();
+        String frameName = "frame_TODO"; 
+
+        if(code.startCode(frameName + ".j")){
+            code.emit(".class " + frameName);
+            code.emit(".super java/lang/Object");
+            code.emit(".field public sl Lancestor_TODO");
+            for (int i = 0 ; i < names.size() ; i++) {
+                String jvmType = Code.getJVMType(initTypes.get(i));
+                code.emit(".field public " + names.get(i) + " " + jvmType);
+            }
+            code.emit(".method public <init>()V");
+            code.emit("aload_0");
+            code.emit("invokenonvirtual java/lang/Object/<init>()V");
+            code.emit("return");
+            code.emit(".end method");
+            code.endCode();
+        }
+        
+        code.emit("new " + frameName);
+        code.emit("dup");
+        code.emit("invokespecial " + frameName + "/<init>()V");
+        code.emit("dup");
+        code.emit("aload SL");
+        code.emit("putfield " + frameName + "/sl L" + frameName);//TODO
+        code.emit("dup");
+        code.emit("astore SL");
+        for (int i = 0 ; i < initExprs.size() ; i++){
+            String jvmType = Code.getJVMType(initTypes.get(i));
+            code.emit("dup");
+            initExprs.get(i).compile();
+            code.emit("putfield " + frameName + "/x" + i + " " + jvmType);
+        }
+        body.compile();
+        code.emit("aload SL");
+        code.emit("getfield " + frameName + "/sl L" + frameName);//TODO
+        code.emit("astore SL");
     }
 }

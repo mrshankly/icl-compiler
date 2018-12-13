@@ -24,8 +24,8 @@ public class ASTNew implements ASTNode {
         Code code = Code.getInstance();
         IType refType = ((TRef) type).getType();
 
-        String jvmType = code.getJVMType(refType);
-        String classname = code.getRefClass(refType);
+        String jvmType = Code.getJVMType(refType);
+        String classname = Code.getRefClass(refType);
 
         // Create ref class if it doesn't already exist.
         if (code.startCode(classname + ".j")) {
