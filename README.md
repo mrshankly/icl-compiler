@@ -1,5 +1,6 @@
-# Trabalho Prático de ICL 2018
+# Interpretação e Compilação de Linguagens - 2018
 
-*Realizado por:*
-Vicente Almeida 47803
-João Marques 48500
+**Trabalho prático realizado por:**
+
+* João Marques n.° 48500
+* Vicente Almeida n.° 47803
