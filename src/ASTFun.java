@@ -39,6 +39,6 @@ public class ASTFun implements ASTNode {
         return type;
     }
 
-    public void compile() {
+    public void compile(Environment<Integer> env) {
     }
 }

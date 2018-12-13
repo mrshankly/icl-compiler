@@ -3,8 +3,7 @@ public interface ASTNode {
 
     IType typecheck(Environment<IType> env) throws TypeException;
 
+    void compile(Environment<Integer> env);
+
     IType getType();
-
-    void compile();
-
 }

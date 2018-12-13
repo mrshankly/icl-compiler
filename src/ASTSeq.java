@@ -23,9 +23,9 @@ public class ASTSeq implements ASTNode {
         return type;
     }
 
-    public void compile() {
-        expression1.compile();
+    public void compile(Environment<Integer> env) {
+        expression1.compile(env);
         Code.getInstance().emit("pop");
-        expression2.compile();
+        expression2.compile(env);
     }
 }

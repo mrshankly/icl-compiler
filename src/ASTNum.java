@@ -17,7 +17,7 @@ public class ASTNum implements ASTNode {
         return TInt.getInstance();
     }
 
-    public void compile() {
+    public void compile(Environment<Integer> env) {
         Code.getInstance().emit("sipush " + value);
     }
 }

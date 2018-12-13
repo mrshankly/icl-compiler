@@ -66,7 +66,7 @@ public class Parser {
             Code mainCode = Code.getInstance();
 
             mainCode.emitIntro(classname);
-            expression.compile();
+            expression.compile(new Environment<Integer>());
             mainCode.emitEpilogue();
             mainCode.dump(classname + ".j");
 

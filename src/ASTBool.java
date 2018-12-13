@@ -17,7 +17,7 @@ public class ASTBool implements ASTNode {
         return TBool.getInstance();
     }
 
-    public void compile() {
+    public void compile(Environment<Integer> env) {
         Code.getInstance().emit(value ? "iconst_1" : "iconst_0");
     }
 }

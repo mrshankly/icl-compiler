@@ -62,7 +62,7 @@ public class Code {
         if (type instanceof TInt || type instanceof TBool) {
             return "I";
         } else {
-            return "Ljava/lang/Object";
+            return "Ljava/lang/Object;";
         }
     }
 
@@ -121,6 +121,9 @@ public class Code {
         mainCode.append("\t; set limits used by this method\n");
         mainCode.append("\t.limit locals 10\n");
         mainCode.append("\t.limit stack 256\n");
+        mainCode.append("\t; initialize SL variable to null\n");
+        mainCode.append("\taconst_null\n");
+        mainCode.append("\tastore_3\n");
         mainCode.append("\t; PrintStream object held in java.lang.out\n");
         mainCode.append("\tgetstatic java/lang/System/out Ljava/io/PrintStream;\n");
 

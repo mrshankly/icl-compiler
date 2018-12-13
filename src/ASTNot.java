@@ -26,10 +26,10 @@ public class ASTNot implements ASTNode {
         return type;
     }
 
-    public void compile() {
+    public void compile(Environment<Integer> env) {
         Code code = Code.getInstance();
 
-        node.compile();
+        node.compile(env);
         code.emit("iconst_1");
         code.emit("ixor");
     }

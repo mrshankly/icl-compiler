@@ -30,12 +30,12 @@ public class ASTDeRef implements ASTNode {
         return type;
     }
 
-    public void compile() {
+    public void compile(Environment<Integer> env) {
         Code code = Code.getInstance();
         String jvmType = Code.getJVMType(type);
         String classname = Code.getRefClass(type);
 
-        expression.compile();
+        expression.compile(env);
         code.emit("checkcast " + classname);
         code.emit("getfield " + classname + "/value " + jvmType);
     }

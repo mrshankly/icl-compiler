@@ -8,7 +8,7 @@ public class ASTId implements ASTNode {
     }
 
     public IValue eval(Environment<IValue> env) {
-        IValue value = env.find(name);
+        IValue value = env.find(name).value;
 
         if (value instanceof VUndefined) {
             throw new NameNotDefinedException("Name '" + name + "' is undefined.");
@@ -18,7 +18,7 @@ public class ASTId implements ASTNode {
 
     public IType typecheck(Environment<IType> env) throws TypeException {
         try {
-            type = env.find(name);
+            type = env.find(name).value;
         } catch (NameNotDeclaredException e) {
             throw new TypeException(e.getMessage());
         }
@@ -29,6 +29,6 @@ public class ASTId implements ASTNode {
         return type;
     }
 
-    public void compile() {
+    public void compile(Environment<Integer> env) {
     }
 }

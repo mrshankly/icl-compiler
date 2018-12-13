@@ -41,16 +41,16 @@ public class ASTAssign implements ASTNode {
         return type;
     }
 
-    public void compile() {
+    public void compile(Environment<Integer> env) {
         Code code = Code.getInstance();
         String jvmType = Code.getJVMType(type);
         String classname = Code.getRefClass(type);
 
-        left.compile();
+        left.compile(env);
         code.emit("checkcast " + classname);
         code.emit("dup");
 
-        right.compile();
+        right.compile(env);
         code.emit("putfield " + classname + "/value " + jvmType);
         code.emit("getfield " + classname + "/value " + jvmType);
     }

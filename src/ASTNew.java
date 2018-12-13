@@ -20,7 +20,7 @@ public class ASTNew implements ASTNode {
         return type;
     }
 
-    public void compile() {
+    public void compile(Environment<Integer> env) {
         Code code = Code.getInstance();
         IType refType = ((TRef) type).getType();
 
@@ -29,7 +29,7 @@ public class ASTNew implements ASTNode {
 
         // Create ref class if it doesn't already exist.
         if (code.startCode(classname + ".j")) {
-            code.emit(".class " + classname);
+            code.emit(".class public " + classname);
             code.emit(".super java/lang/Object");
             code.emit(".field public value " + jvmType);
             code.emit(".method public <init>()V");
@@ -44,7 +44,7 @@ public class ASTNew implements ASTNode {
         code.emit("dup");
         code.emit("invokespecial " + classname + "/<init>()V");
         code.emit("dup");
-        expression.compile();
+        expression.compile(env);
         code.emit("putfield " + classname + "/value " + jvmType);
     }
 }

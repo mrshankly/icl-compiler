@@ -34,16 +34,16 @@ public class ASTWhile implements ASTNode {
         return type;
     }
 
-    public void compile() {
+    public void compile(Environment<Integer> env) {
         Code code = Code.getInstance();
 
         String l1 = code.getNewLabel();
         code.emit(l1 + ":");
-        condition.compile();
+        condition.compile(env);
         String l2 = code.getNewLabel();
         code.emit("ifeq " + l2);
 
-        expression.compile();
+        expression.compile(env);
         code.emit("pop");
         code.emit("goto " + l1);
 

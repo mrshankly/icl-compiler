@@ -61,6 +61,6 @@ public class ASTApply implements ASTNode {
         return type;
     }
 
-    public void compile() {
+    public void compile(Environment<Integer> env) {
     }
 }

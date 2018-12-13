@@ -33,9 +33,9 @@ public class ASTSub implements ASTNode {
         return type;
     }
 
-    public void compile() {
-        left.compile();
-        right.compile();
+    public void compile(Environment<Integer> env) {
+        left.compile(env);
+        right.compile(env);
         Code.getInstance().emit("isub");
     }
 }

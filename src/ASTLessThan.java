@@ -33,11 +33,11 @@ public class ASTLessThan implements ASTNode {
         return type;
     }
 
-    public void compile() {
+    public void compile(Environment<Integer> env) {
         Code code = Code.getInstance();
 
-        left.compile();
-        right.compile();
+        left.compile(env);
+        right.compile(env);
 
         String l1 = code.getNewLabel();
         code.emit("if_icmplt " + l1);

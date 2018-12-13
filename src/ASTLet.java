@@ -62,43 +62,60 @@ public class ASTLet implements ASTNode {
         return type;
     }
 
-    public void compile() {
+    public void compile(Environment<Integer> env) {
+        Environment<Integer> bodyEnv = env.beginScope();
         Code code = Code.getInstance();
-        String frameName = "frame_TODO"; 
 
-        if(code.startCode(frameName + ".j")){
-            code.emit(".class " + frameName);
+        String currentFrame = bodyEnv.getFrameName();
+        String parentFrame = env.getFrameName();
+
+        if (code.startCode(currentFrame + ".j")) {
+            code.emit(".class public " + currentFrame);
             code.emit(".super java/lang/Object");
-            code.emit(".field public sl Lancestor_TODO");
-            for (int i = 0 ; i < names.size() ; i++) {
-                String jvmType = Code.getJVMType(initTypes.get(i));
-                code.emit(".field public " + names.get(i) + " " + jvmType);
+            code.emit(".field public sl L" + parentFrame + ";");
+
+            // Create a field for each name declared.
+            for (int i = 0; i < names.size(); i++) {
+                bodyEnv.assoc(names.get(i), i);
+                code.emit(".field public v" + i + " " + Code.getJVMType(initTypes.get(i)));
             }
+
             code.emit(".method public <init>()V");
             code.emit("aload_0");
             code.emit("invokenonvirtual java/lang/Object/<init>()V");
             code.emit("return");
             code.emit(".end method");
             code.endCode();
+        } else {
+            // A frame class creation should never fail, if it does it's because
+            // that frame class already exists, it's a bug if that ever happens.
+            throw new RuntimeException("'" + currentFrame + ".j' already exists.");
         }
-        
-        code.emit("new " + frameName);
+
+        code.emit("new " + currentFrame);
         code.emit("dup");
-        code.emit("invokespecial " + frameName + "/<init>()V");
+        code.emit("invokespecial " + currentFrame + "/<init>()V");
         code.emit("dup");
-        code.emit("aload SL");
-        code.emit("putfield " + frameName + "/sl L" + frameName);//TODO
+        code.emit("aload_3");
+        code.emit("putfield " + currentFrame + "/sl L" + parentFrame + ";");
         code.emit("dup");
-        code.emit("astore SL");
-        for (int i = 0 ; i < initExprs.size() ; i++){
-            String jvmType = Code.getJVMType(initTypes.get(i));
+        code.emit("astore_3");
+
+        // Initialize the declared names with the corresponding expression.
+        for (int i = 0; i < initExprs.size(); i++){
             code.emit("dup");
-            initExprs.get(i).compile();
-            code.emit("putfield " + frameName + "/x" + i + " " + jvmType);
+            initExprs.get(i).compile(bodyEnv);
+            code.emit("putfield " + currentFrame + "/v" + i + " " + Code.getJVMType(initTypes.get(i)));
         }
-        body.compile();
-        code.emit("aload SL");
-        code.emit("getfield " + frameName + "/sl L" + frameName);//TODO
-        code.emit("astore SL");
+        // Remove the leftover frame from the stack.
+        code.emit("pop");
+
+        body.compile(bodyEnv);
+        bodyEnv.endScope();
+
+        // Restore parent frame.
+        code.emit("aload_3");
+        code.emit("getfield " + currentFrame + "/sl L" + parentFrame + ";");
+        code.emit("astore_3");
     }
 }

@@ -32,14 +32,14 @@ public class ASTOr implements ASTNode {
         return type;
     }
 
-    public void compile() {
+    public void compile(Environment<Integer> env) {
         Code code = Code.getInstance();
 
-        left.compile();
+        left.compile(env);
         String l1 = code.getNewLabel();
         code.emit("ifne " + l1);
 
-        right.compile();
+        right.compile(env);
         code.emit("ifne " + l1);
 
         code.emit("iconst_0");
