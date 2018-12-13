@@ -22,16 +22,10 @@ public class ASTNew implements ASTNode {
 
     public void compile() {
         Code code = Code.getInstance();
-        String jvmType, classname;
         IType refType = ((TRef) type).getType();
 
-        if (refType instanceof TInt || refType instanceof TBool) {
-            classname = "ref_int";
-            jvmType = "I";
-        } else {
-            classname = "ref_obj";
-            jvmType = "Ljava/lang/Object";
-        }
+        String jvmType = code.getJVMType(refType);
+        String classname = code.getRefClass(refType);
 
         // Create ref class if it doesn't already exist.
         if (code.startCode(classname + ".j")) {

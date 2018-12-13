@@ -32,15 +32,8 @@ public class ASTDeRef implements ASTNode {
 
     public void compile() {
         Code code = Code.getInstance();
-        String jvmType, classname;
-
-        if (type instanceof TInt || type instanceof TBool) {
-            classname = "ref_int";
-            jvmType = "I";
-        } else {
-            classname = "ref_obj";
-            jvmType = "Ljava/lang/Object";
-        }
+        String jvmType = code.getJVMType(type);
+        String classname = code.getRefClass(type);
 
         expression.compile();
         code.emit("checkcast " + classname);

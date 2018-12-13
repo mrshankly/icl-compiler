@@ -58,6 +58,22 @@ public class Code {
         return instance;
     }
 
+    public static String getJVMType(IType type){
+        if (type instanceof TInt || type instanceof TBool) {
+            return "I";
+        } else {
+            return "Ljava/lang/Object";
+        }
+    }
+
+    public static String getRefClass(IType type){
+        if (type instanceof TInt || type instanceof TBool) {
+            return "ref_int";
+        } else {
+            return "ref_obj";
+        }
+    }
+
     public String getNewLabel() {
         return "L" + label++;
     }
