@@ -16,6 +16,11 @@ public class TInt implements IType {
     }
 
     @Override
+    public String showSimple() {
+        return show();
+    }
+
+    @Override
     public boolean equals(Object obj) {
         return (obj instanceof TInt);
     }

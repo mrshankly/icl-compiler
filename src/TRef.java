@@ -15,6 +15,11 @@ public class TRef implements IType {
     }
 
     @Override
+    public String showSimple() {
+        return "ref";
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;

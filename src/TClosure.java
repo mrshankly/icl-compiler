@@ -4,10 +4,14 @@ import java.util.stream.Collectors;
 public class TClosure implements IType {
     private List<IType> paramsTypes;
     private IType ret;
+    private String interfaceName;
+    private String callSignature;
 
     public TClosure(List<IType> paramsTypes, IType ret) {
         this.paramsTypes = paramsTypes;
         this.ret = ret;
+        this.interfaceName = null;
+        this.callSignature = null;
     }
 
     public List<IType> getParamsTypes() {
@@ -18,6 +22,28 @@ public class TClosure implements IType {
         return ret;
     }
 
+    public String getInterfaceName() {
+        if (interfaceName == null) {
+            interfaceName = "closure_interface";
+            for (IType t : paramsTypes) {
+                interfaceName += "_" + t.showSimple();
+            }
+            interfaceName += "_" + ret.showSimple();
+        }
+        return interfaceName;
+    }
+
+    public String getCallSignature() {
+        if (callSignature == null) {
+            callSignature = "(";
+            for (IType t : paramsTypes) {
+                callSignature += "_" + Code.getJVMType(t);
+            }
+            callSignature += ")" + Code.getJVMType(ret);
+        }
+        return callSignature;
+    }
+
     @Override
     public String show() {
         String paramsString = paramsTypes.stream()
@@ -25,6 +51,11 @@ public class TClosure implements IType {
                                          .collect(Collectors.joining(", "));
 
         return String.format("(%s)%s", paramsString, ret.show());
+    }
+
+    @Override
+    public String showSimple() {
+        return "closure";
     }
 
     @Override
