@@ -30,5 +30,25 @@ public class ASTId implements ASTNode {
     }
 
     public void compile(Environment<Integer> env) {
+        Environment<Integer>.FindResult<Integer> result = env.find(name);
+        int level = result.level;
+        int index = result.value;
+
+        Code code = Code.getInstance();
+        String jvmType = Code.getJVMType(type);
+
+        Environment<Integer> currentEnv = env;
+        Environment<Integer> parentEnv = env.endScope();
+
+        code.emit("aload_3");
+        for (int i = 1; i <= level; i++) {
+            String currentFrame = currentEnv.getFrameName();
+            String parentFrame = parentEnv.getFrameName();
+
+            code.emit("getfield " + currentFrame + "/sl L" + parentFrame + ";");
+            currentEnv = parentEnv;
+            parentEnv = parentEnv.endScope();
+        }
+        code.emit("getfield " + currentEnv.getFrameName() + "/v" + index + " " + jvmType);
     }
 }
