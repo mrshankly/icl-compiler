@@ -2,7 +2,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class ASTFun implements ASTNode {
-    private static long functionCounter;
+    private static long functionCounter = 0;
 
     private List<String> params;
     private List<IType> paramsTypes;
@@ -54,7 +54,7 @@ public class ASTFun implements ASTNode {
         if (code.startCode(interfaceName + ".j")) {
             code.emit(".interface public " + interfaceName);
             code.emit(".super java/lang/Object");
-            code.emit(".method abstract call" + callSignature);
+            code.emit(".method public abstract call" + callSignature);
             code.emit(".end method");
             code.endCode();
         }
@@ -100,9 +100,14 @@ public class ASTFun implements ASTNode {
             code.emit(".end method");
 
             code.emit(".method public call" + callSignature);
-            code.emit("\t.limit locals " + (params.size() + 1));
+
+            int max_locals = Math.max(4, params.size() + 1);
+            code.emit(".limit locals " + max_locals);
+            code.emit(".limit stack 256")
 
             code.emit("new " + functionFrame);
+            code.emit("dup");
+            code.emit("invokespecial " + functionFrame + "/<init>()V");
             code.emit("dup");
             code.emit("aload_0");
             code.emit("getfield " + functionClass + "/sl L" + parentFrame + ";");
@@ -126,6 +131,8 @@ public class ASTFun implements ASTNode {
         bodyEnv.endScope();
 
         code.emit("new " + functionClass);
+        code.emit("dup");
+        code.emit("invokespecial " + functionClass + "/<init>()V");
         code.emit("dup");
         code.emit("aload_3");
         code.emit("putfield " + functionClass + "/sl L" + parentFrame + ";");

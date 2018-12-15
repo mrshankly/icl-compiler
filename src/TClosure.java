@@ -37,7 +37,7 @@ public class TClosure implements IType {
         if (callSignature == null) {
             callSignature = "(";
             for (IType t : paramsTypes) {
-                callSignature += "_" + Code.getJVMType(t);
+                callSignature += Code.getJVMType(t);
             }
             callSignature += ")" + Code.getJVMType(ret);
         }

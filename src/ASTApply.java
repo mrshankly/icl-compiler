@@ -62,5 +62,19 @@ public class ASTApply implements ASTNode {
     }
 
     public void compile(Environment<Integer> env) {
+        TClosure lambdaType = (TClosure) lambda.getType();
+        Code code = Code.getInstance();
+
+        String interfaceName = lambdaType.getInterfaceName();
+        String callSignature = lambdaType.getCallSignature();
+
+        lambda.compile(env);
+        code.emit("checkcast " + interfaceName);
+        for (ASTNode arg : args) {
+            arg.compile(env);
+        }
+
+        int n = args.size() + 1;
+        code.emit("invokeinterface " + interfaceName + "/call" + callSignature + " " + n);
     }
 }
