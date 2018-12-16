@@ -20,7 +20,7 @@ build:
 	javac -d out src/*.java
 
 package: build
-	jar cmvf META-INF/MANIFEST.MF parser.jar -C out/ .
+	jar cmf META-INF/MANIFEST.MF parser.jar -C out/ .
 
 clean:
 	rm -f $(JAVACC_GENERATED_FILES) parser.jar
