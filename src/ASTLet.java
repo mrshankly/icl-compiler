@@ -77,7 +77,7 @@ public class ASTLet implements ASTNode {
             // Create a field for each name declared.
             for (int i = 0; i < names.size(); i++) {
                 bodyEnv.assoc(names.get(i), i);
-                code.emit(".field public v" + i + " " + Code.getJVMType(initTypes.get(i)));
+                code.emit(".field public v" + i + " " + initTypes.get(i).getJVMType());
             }
 
             code.emit(".method public <init>()V");
@@ -105,7 +105,7 @@ public class ASTLet implements ASTNode {
         for (int i = 0; i < initExprs.size(); i++){
             code.emit("dup");
             initExprs.get(i).compile(bodyEnv);
-            code.emit("putfield " + currentFrame + "/v" + i + " " + Code.getJVMType(initTypes.get(i)));
+            code.emit("putfield " + currentFrame + "/v" + i + " " + initTypes.get(i).getJVMType());
         }
         // Remove the leftover frame from the stack.
         code.emit("pop");

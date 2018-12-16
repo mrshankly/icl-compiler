@@ -35,8 +35,6 @@ public class ASTId implements ASTNode {
         int index = result.value;
 
         Code code = Code.getInstance();
-        String jvmType = Code.getJVMType(type);
-
         Environment<Integer> currentEnv = env;
         Environment<Integer> parentEnv = env.endScope();
 
@@ -49,6 +47,6 @@ public class ASTId implements ASTNode {
             currentEnv = parentEnv;
             parentEnv = parentEnv.endScope();
         }
-        code.emit("getfield " + currentEnv.getFrameName() + "/v" + index + " " + jvmType);
+        code.emit("getfield " + currentEnv.getFrameName() + "/v" + index + " " + type.getJVMType());
     }
 }

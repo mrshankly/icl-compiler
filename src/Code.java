@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public class Code {
     private static final int INITIAL_CAPACITY = 100;
@@ -29,13 +30,21 @@ public class Code {
         label = 1;
     }
 
+    public static Code getInstance() {
+        if (instance == null) {
+            instance = new Code();
+        }
+        return instance;
+    }
+
     // Helper methods.
 
     private static boolean isDirective(String instruction) {
-        return instruction.charAt(0) == '.';
+        return instruction.trim().charAt(0) == '.';
     }
 
     private static boolean isLabel(String instruction) {
+        instruction = instruction.trim();
         char first = instruction.charAt(0);
         char last = instruction.charAt(instruction.length() - 1);
         return (first == 'L') && (last == ':');
@@ -50,29 +59,6 @@ public class Code {
     }
 
     // Public methods.
-
-    public static Code getInstance() {
-        if (instance == null) {
-            instance = new Code();
-        }
-        return instance;
-    }
-
-    public static String getJVMType(IType type){
-        if (type instanceof TInt || type instanceof TBool) {
-            return "I";
-        } else {
-            return "Ljava/lang/Object;";
-        }
-    }
-
-    public static String getRefClass(IType type){
-        if (type instanceof TInt || type instanceof TBool) {
-            return "ref_int";
-        } else {
-            return "ref_obj";
-        }
-    }
 
     public String getNewLabel() {
         return "L" + label++;

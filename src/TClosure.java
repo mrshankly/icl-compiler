@@ -4,14 +4,10 @@ import java.util.stream.Collectors;
 public class TClosure implements IType {
     private List<IType> paramsTypes;
     private IType ret;
-    private String interfaceName;
-    private String callSignature;
 
     public TClosure(List<IType> paramsTypes, IType ret) {
         this.paramsTypes = paramsTypes;
         this.ret = ret;
-        this.interfaceName = null;
-        this.callSignature = null;
     }
 
     public List<IType> getParamsTypes() {
@@ -20,28 +16,6 @@ public class TClosure implements IType {
 
     public IType getReturnType() {
         return ret;
-    }
-
-    public String getInterfaceName() {
-        if (interfaceName == null) {
-            interfaceName = "closure_interface";
-            for (IType t : paramsTypes) {
-                interfaceName += "_" + t.showSimple();
-            }
-            interfaceName += "_" + ret.showSimple();
-        }
-        return interfaceName;
-    }
-
-    public String getCallSignature() {
-        if (callSignature == null) {
-            callSignature = "(";
-            for (IType t : paramsTypes) {
-                callSignature += Code.getJVMType(t);
-            }
-            callSignature += ")" + Code.getJVMType(ret);
-        }
-        return callSignature;
     }
 
     @Override
@@ -56,6 +30,37 @@ public class TClosure implements IType {
     @Override
     public String showSimple() {
         return "closure";
+    }
+
+    @Override
+    public String getJVMType() {
+        return "Ljava/lang/Object;";
+    }
+
+    @Override
+    public String getJVMTypePrefix() {
+        return "a";
+    }
+
+    @Override
+    public String getJVMReferenceClass() {
+        return "ref_obj";
+    }
+
+    public String getJVMInterfaceName() {
+        String paramsString = paramsTypes.stream()
+                                         .map(t -> t.showSimple())
+                                         .collect(Collectors.joining("_"));
+
+        return String.format("closure_interface_%s_%s", paramsString, ret.showSimple());
+    }
+
+    public String getJVMCallSignature() {
+        String paramsString = paramsTypes.stream()
+                                         .map(t -> t.getJVMType())
+                                         .collect(Collectors.joining(""));
+
+        return "(" + paramsString + ")" + ret.getJVMType();
     }
 
     @Override

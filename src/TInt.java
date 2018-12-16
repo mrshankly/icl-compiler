@@ -21,6 +21,21 @@ public class TInt implements IType {
     }
 
     @Override
+    public String getJVMType() {
+        return "I";
+    }
+
+    @Override
+    public String getJVMTypePrefix() {
+        return "i";
+    }
+
+    @Override
+    public String getJVMReferenceClass() {
+        return "ref_int";
+    }
+
+    @Override
     public boolean equals(Object obj) {
         return (obj instanceof TInt);
     }

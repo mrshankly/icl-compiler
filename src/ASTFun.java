@@ -1,5 +1,6 @@
 import java.util.List;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class ASTFun implements ASTNode {
     private static long functionCounter = 0;
@@ -47,8 +48,8 @@ public class ASTFun implements ASTNode {
         Environment<Integer> bodyEnv = env.beginScope();
         Code code = Code.getInstance();
 
-        String interfaceName = type.getInterfaceName();
-        String callSignature = type.getCallSignature();
+        String interfaceName = type.getJVMInterfaceName();
+        String callSignature = type.getJVMCallSignature();
 
         // Create interface if it doesn't exist.
         if (code.startCode(interfaceName + ".j")) {
@@ -62,6 +63,10 @@ public class ASTFun implements ASTNode {
         String functionFrame = bodyEnv.getFrameName();
         String parentFrame = env.getFrameName();
 
+        List<String> jvmParamsTypes = paramsTypes.stream()
+                                                 .map(t -> t.getJVMType())
+                                                 .collect(Collectors.toList());
+
         // Create function frame.
         if (code.startCode(functionFrame + ".j")) {
             code.emit(".class public " + functionFrame);
@@ -71,7 +76,7 @@ public class ASTFun implements ASTNode {
             // Create a field for each function argument.
             for (int i = 0; i < params.size(); i++) {
                 bodyEnv.assoc(params.get(i), i);
-                code.emit(".field public v" + i + " " + Code.getJVMType(paramsTypes.get(i)));
+                code.emit(".field public v" + i + " " + jvmParamsTypes.get(i));
             }
 
             code.emit(".method public <init>()V");
@@ -81,6 +86,7 @@ public class ASTFun implements ASTNode {
             code.emit(".end method");
             code.endCode();
         } else {
+            // Frame creation should never fail.
             throw new RuntimeException("'" + functionFrame + ".j' already exists.");
         }
 
@@ -102,8 +108,8 @@ public class ASTFun implements ASTNode {
             code.emit(".method public call" + callSignature);
 
             int max_locals = Math.max(4, params.size() + 1);
-            code.emit(".limit locals " + max_locals);
-            code.emit(".limit stack 256")
+            code.emit("\t.limit locals " + max_locals);
+            code.emit("\t.limit stack 256");
 
             code.emit("new " + functionFrame);
             code.emit("dup");
@@ -115,17 +121,18 @@ public class ASTFun implements ASTNode {
 
             for (int i = 0; i < paramsTypes.size(); i++) {
                 code.emit("dup");
-                code.emit("aload " + (i + 1));
-                code.emit("putfield " + functionFrame + "/v" + i + " " + Code.getJVMType(paramsTypes.get(i)));
+                code.emit(paramsTypes.get(i).getJVMTypePrefix() + "load " + (i + 1));
+                code.emit("putfield " + functionFrame + "/v" + i + " " + jvmParamsTypes.get(i));
             }
 
             code.emit("astore_3");
             body.compile(bodyEnv);
-            code.emit("return");
+            code.emit(type.getReturnType().getJVMTypePrefix() + "return");
             code.emit(".end method");
 
             code.endCode();
         } else {
+            // Function class creation should never fail.
             throw new RuntimeException("'" + functionClass + ".j' already exists.");
         }
         bodyEnv.endScope();

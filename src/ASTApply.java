@@ -65,8 +65,8 @@ public class ASTApply implements ASTNode {
         TClosure lambdaType = (TClosure) lambda.getType();
         Code code = Code.getInstance();
 
-        String interfaceName = lambdaType.getInterfaceName();
-        String callSignature = lambdaType.getCallSignature();
+        String interfaceName = lambdaType.getJVMInterfaceName();
+        String callSignature = lambdaType.getJVMCallSignature();
 
         lambda.compile(env);
         code.emit("checkcast " + interfaceName);

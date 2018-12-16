@@ -20,6 +20,21 @@ public class TRef implements IType {
     }
 
     @Override
+    public String getJVMType() {
+        return "Ljava/lang/Object;";
+    }
+
+    @Override
+    public String getJVMTypePrefix() {
+        return "a";
+    }
+
+    @Override
+    public String getJVMReferenceClass() {
+        return "ref_obj";
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
