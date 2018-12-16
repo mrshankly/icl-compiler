@@ -2,9 +2,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -130,17 +132,29 @@ public class Code {
         mainCode.append(".end method\n");
     }
 
-    public void dump(String filename) throws IOException {
+    public List<String> dump(String filename) throws IOException {
+        List<String> outputFiles = new ArrayList<String>(auxCodes.size() + 1);
+
         // Write main file.
         BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
         writer.append(mainCode);
         writer.close();
 
+        outputFiles.add(filename);
+        System.out.println("[compiler] Generated: " + filename);
+
         // Write remaining files.
         for (Map.Entry<String, StringBuilder> entry : auxCodes.entrySet()) {
-            writer = new BufferedWriter(new FileWriter(entry.getKey()));
+            filename = entry.getKey();
+
+            writer = new BufferedWriter(new FileWriter(filename));
             writer.append(entry.getValue());
             writer.close();
+
+            outputFiles.add(filename);
+            System.out.println("[compiler] Generated: " + filename);
         }
+
+        return outputFiles;
     }
 }

@@ -2,8 +2,10 @@ PARSER_BEGIN(Parser)
 
 import java.util.List;
 import java.util.ArrayList;
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
 
 public class Parser {
 
@@ -68,8 +70,8 @@ public class Parser {
             mainCode.emitIntro(classname);
             expression.compile(new Environment<Integer>());
             mainCode.emitEpilogue();
-            mainCode.dump(classname + ".j");
-
+            List<String> files = mainCode.dump(classname + ".j");
+            runJasmin(files);
         } else {
             System.err.println("Usage: java Parser [<file>]");
         }
@@ -89,6 +91,31 @@ public class Parser {
             return s.substring(0, s.lastIndexOf("."));
         }
         return s;
+    }
+
+    private static void runJasmin(List<String> files) {
+        String[] command = new String[] {
+          "sh", "-c", "java -jar jasmin.jar " + String.join(" ", files)
+        };
+
+        try {
+            Process p = Runtime.getRuntime().exec(command);
+            p.waitFor();
+
+            if (p.exitValue() == 0) {
+                BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                String line = br.readLine();
+                while (line != null) {
+                    System.out.println("[ jasmin ] " + line);
+                    line = br.readLine();
+                }
+            } else {
+                System.out.println("Warning: Failed to run jasmin.jar on .j files.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
     }
 }
 
