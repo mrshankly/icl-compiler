@@ -202,10 +202,27 @@ ASTNode Assignment() :
   ASTNode t1, t2;
 }
 {
-  t1=LogicalOR()
-  ( <ASSIGNREF> t2=LogicalOR()
+  t1=NewPrintln()
+  ( <ASSIGNREF> t2=NewPrintln()
     { t1 = new ASTAssign(t1, t2); }
   )?
+  { return t1; }
+}
+
+ASTNode NewPrintln() :
+{
+  ASTNode t1;
+}
+{
+  (
+    t1=LogicalOR()
+  |
+    <NEW> t1=NewPrintln()
+    { t1 = new ASTNew(t1); }
+  |
+    <PRINTLN> t1=NewPrintln()
+    { t1 = new ASTPrintln(t1); }
+  )
   { return t1; }
 }
 
@@ -281,8 +298,8 @@ ASTNode AddSub() :
   ASTNode t1, t2;
 }
 {
-  t1=Term()
-  ( (op=<PLUS> | op=<MINUS>) t2=Term()
+  t1=MulDiv()
+  ( (op=<PLUS> | op=<MINUS>) t2=MulDiv()
     {
       if (op.kind == PLUS) {
         t1 = new ASTAdd(t1, t2);
@@ -294,7 +311,7 @@ ASTNode AddSub() :
   { return t1; }
 }
 
-ASTNode Term() :
+ASTNode MulDiv() :
 {
   Token op;
   ASTNode t1, t2;
@@ -329,12 +346,6 @@ ASTNode Unary() :
   |
     <DEREF> t1=Unary()
     { t1 = new ASTDeRef(t1); }
-  |
-    <NEW> t1=Unary()
-    { t1 = new ASTNew(t1); }
-  |
-    <PRINTLN> t1=Unary()
-    { t1 = new ASTPrintln(t1); }
   )
   { return t1; }
 }
