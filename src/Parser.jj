@@ -139,6 +139,7 @@ TOKEN :
 | < THEN : "then" >
 | < ELSE : "else" >
 | < NEW : "new" >
+| < PRINTLN : "println" >
 | < WHILE : "while" >
 | < DO : "do" >
 | < LET : "let" >
@@ -331,6 +332,9 @@ ASTNode Unary() :
   |
     <NEW> t1=Unary()
     { t1 = new ASTNew(t1); }
+  |
+    <PRINTLN> t1=Unary()
+    { t1 = new ASTPrintln(t1); }
   )
   { return t1; }
 }
