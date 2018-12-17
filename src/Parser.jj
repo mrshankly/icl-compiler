@@ -133,6 +133,7 @@ TOKEN :
 {
   < INT : "int" >
 | < BOOL : "bool" >
+| < STRING : "string" >
 | < REF : "ref" >
 | < IF : "if" >
 | < THEN : "then" >
@@ -170,6 +171,7 @@ TOKEN :
 | < NUM : (["0"-"9"])+ >
 | < TRUE : "true" >
 | < FALSE : "false" >
+| < STRING_LITERAL : "\"" (~["\""])* "\"" >
 | < ID : ["a"-"z","A"-"Z","_"] (["a"-"z","A"-"Z","_","0"-"9"])* >
 }
 
@@ -369,6 +371,9 @@ IType Type() :
     n=<BOOL>
     { t = TBool.getInstance(); }
   |
+    n=<STRING>
+    { t = TString.getInstance(); }
+  |
     n=<REF> t=Type()
     { t = new TRef(t); }
   |
@@ -404,6 +409,9 @@ ASTNode Factor() :
   |
     (n=<TRUE> | n=<FALSE>)
     { t1 = new ASTBool(Boolean.parseBoolean(n.image)); }
+  |
+    n=<STRING_LITERAL>
+    { t1 = new ASTString(n.image.substring(1, n.image.length() - 1)); }
   |
     <IF> t1=Expression() <THEN> t2=Expression() <ELSE> t3=Expression() <END>
     { t1 = new ASTIf(t1, t2, t3); }
