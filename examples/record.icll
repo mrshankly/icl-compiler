@@ -1,0 +1,6 @@
+let
+    person1 : [name:string; age:int] = [name = "joe"; age = 22]
+    person2 : [name:string; age:int] = [name = "mary"; age = 5]
+in
+    println person1.age + person2.age
+end;;

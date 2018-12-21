@@ -1,6 +1,5 @@
 *.j
 *.class
-*.icll
 parser.jar
 
 # Build files.
