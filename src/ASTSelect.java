@@ -26,7 +26,7 @@ public class ASTSelect implements ASTNode {
             );
         }
 
-        recordType = ((TRecord) t);
+        recordType = (TRecord) t;
         IType fieldType = recordType.get(name);
 
         if (fieldType == null) {

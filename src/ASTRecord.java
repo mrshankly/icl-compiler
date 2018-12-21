@@ -15,23 +15,19 @@ public class ASTRecord implements ASTNode {
 
     public IValue eval(Environment<IValue> env) {
         List<IValue> initValues = new LinkedList<IValue>();
-        for (ASTNode expression : initExprs){
+        for (ASTNode expression : initExprs) {
             initValues.add(expression.eval(env));
         }
-        return new VRecord(fields,initValues);
+        return new VRecord(fields, initValues);
     }
 
     public IType typecheck(Environment<IType> env) throws TypeException {
-
         List<IType> fieldTypes = new LinkedList<IType>();
-        for (int i = 0; i < initExprs.size(); i++) {
-            IType t = initExprs.get(i).typecheck(env);
-        }
 
-        for(ASTNode node : initExprs){
+        for (ASTNode node : initExprs) {
             fieldTypes.add(node.typecheck(env));
         }
-        type = new TRecord(fields,fieldTypes);
+        type = new TRecord(fields, fieldTypes);
         return type;
     }
 
@@ -52,7 +48,6 @@ public class ASTRecord implements ASTNode {
             for (int i = 0; i < fields.size(); i++) {
                 String name = fields.get(i);
                 String jvmType = recordType.get(name).getJVMType();
-
                 code.emit(".field public " + name + " " + jvmType);
             }
 
