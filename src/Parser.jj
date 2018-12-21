@@ -164,6 +164,8 @@ TOKEN :
 | < NOT : "~" >
 | < LPAR : "(" >
 | < RPAR : ")" >
+| < LBRACKET : "[" >
+| < RBRACKET : "]" >
 | < COMMA : "," >
 | < COLON : ":" >
 | < SEQ : ";" >
@@ -376,7 +378,8 @@ IType Type() :
 {
   Token n;
   IType t;
-  List<IType> args_types = new ArrayList<IType>();
+  List<String> ids = new ArrayList<String>();
+  List<IType> types_list = new ArrayList<IType>();
 }
 {
   (
@@ -394,13 +397,31 @@ IType Type() :
   |
     <LPAR>
     (
-      t=Type() { args_types.add(t); }
+      t=Type() { types_list.add(t); }
       (
-        <COMMA> t=Type() { args_types.add(t); }
+        <COMMA> t=Type() { types_list.add(t); }
       )*
     )?
     <RPAR> t=Type()
-    { t = new TClosure(args_types, t); }
+    { t = new TClosure(types_list, t); }
+  |
+    <LBRACKET>
+    (
+      n=<ID> <COLON> t=Type() 
+      { 
+        ids.add(n.image);
+        types_list.add(t); 
+      }
+      (
+        <COMMA> n=<ID> <COLON> t=Type() 
+        { 
+          ids.add(n.image);
+          types_list.add(t); 
+        }
+      )*
+    )?
+    <RBRACKET> 
+    { t = new TRecord(ids, types_list); }
   )
   { return t; }
 }
@@ -427,6 +448,24 @@ ASTNode Factor() :
   |
     n=<STRING_LITERAL>
     { t1 = new ASTString(n.image.substring(1, n.image.length() - 1)); }
+  |
+    <LBRACKET>
+    (
+      n=<ID> <ASSIGN> t1=Expression()
+      { 
+        ids.add(n.image);
+        init_exprs.add(t1);
+      }
+      (
+        <COMMA> n=<ID> <ASSIGN> t1=Expression()
+        { 
+          ids.add(n.image);
+          init_exprs.add(t1);
+        }
+      )*
+    )?
+    <RBRACKET>
+    { t1 = new ASTRecord(ids, init_exprs); }
   |
     <IF> t1=Expression() <THEN> t2=Expression() <ELSE> t3=Expression() <END>
     { t1 = new ASTIf(t1, t2, t3); }
