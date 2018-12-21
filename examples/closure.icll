@@ -1,0 +1,8 @@
+let
+    build_add_fn : (int)(int)int = fun acc : int ->
+        fun x : int -> x + acc end
+    end
+    inc : (int)int = build_add_fn(1)
+in
+    println inc(1)
+end;;
