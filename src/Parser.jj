@@ -428,7 +428,7 @@ IType Type() :
         types_list.add(t);
       }
       (
-        <COMMA> n=<ID> <COLON> t=Type()
+        <SEQ> n=<ID> <COLON> t=Type()
         {
           ids.add(n.image);
           types_list.add(t);
@@ -466,13 +466,13 @@ ASTNode Factor() :
   |
     <LBRACKET>
     (
-      n=<ID> <ASSIGN> t1=Expression()
+      n=<ID> <ASSIGN> t1=Assignment()
       {
         ids.add(n.image);
         init_exprs.add(t1);
       }
       (
-        <COMMA> n=<ID> <ASSIGN> t1=Expression()
+        <SEQ> n=<ID> <ASSIGN> t1=Assignment()
         {
           ids.add(n.image);
           init_exprs.add(t1);
