@@ -47,7 +47,7 @@ public class TRecord implements IType {
 
     public String getJVMRecordClass() {
         String name = fields.entrySet().stream()
-                                          .map(e -> e.getKey() + "_" + e.getValue().show())
+                                          .map(e -> e.getKey() + "_" + e.getValue().showSimple())
                                           .collect(Collectors.joining("_"));
 
         return String.format("record_%s", name);
