@@ -1,6 +1,5 @@
 import java.util.List;
 import java.util.LinkedList;
-import java.util.ArrayList;
 
 public class ASTRecord implements ASTNode {
     private List<String> fields;

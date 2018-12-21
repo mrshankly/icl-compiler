@@ -10,7 +10,7 @@ public class ASTPrintln implements ASTNode {
     public IValue eval(Environment<IValue> env) {
         IValue value = node.eval(env);
         if (value instanceof VString) {
-            // String is different than others becauase we want to print quotes around them.
+            // String is different because we don't want to print quotes around them.
             System.out.println(((VString)value).getValue());
         } else {
             System.out.println(value.show());
