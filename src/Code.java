@@ -112,21 +112,11 @@ public class Code {
         mainCode.append("\t; initialize SL variable to null\n");
         mainCode.append("\taconst_null\n");
         mainCode.append("\tastore_3\n");
-        mainCode.append("\t; PrintStream object held in java.lang.out\n");
-        mainCode.append("\tgetstatic java/lang/System/out Ljava/io/PrintStream;\n");
-
         mainCode.append("\t; ---- END OF INTRO CODE\n");
     }
 
     public void emitEpilogue() {
         mainCode.append("\t; ---- START OF EPILOGUE CODE\n");
-
-        // Convert the value on top of the stack to a string and print it.
-        mainCode.append("\t; convert to String;\n");
-        mainCode.append("\tinvokestatic java/lang/String/valueOf(I)Ljava/lang/String;\n");
-        mainCode.append("\t; call println\n");
-        mainCode.append("\tinvokevirtual java/io/PrintStream/println(Ljava/lang/String;)V\n");
-
         // End of the main method.
         mainCode.append("\treturn\n");
         mainCode.append(".end method\n");

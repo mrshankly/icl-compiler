@@ -22,7 +22,7 @@ public class TBool implements IType {
 
     @Override
     public String getJVMType() {
-        return "I";
+        return "Z";
     }
 
     @Override
