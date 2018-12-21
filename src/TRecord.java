@@ -45,6 +45,14 @@ public class TRecord implements IType {
         return "ref_obj";
     }
 
+    public String getJVMRecordClass() {
+        String name = fields.entrySet().stream()
+                                          .map(e -> e.getKey() + "_" + e.getValue().show())
+                                          .collect(Collectors.joining("_"));
+
+        return String.format("record_%s", name);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) {

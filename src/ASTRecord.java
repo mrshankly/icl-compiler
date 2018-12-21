@@ -40,6 +40,42 @@ public class ASTRecord implements ASTNode {
     }
 
     public void compile(Environment<Integer> env){
+        Code code = Code.getInstance();
+        TRecord recordType = (TRecord) type;
+        String classname = recordType.getJVMRecordClass();
 
+        // Create record class if it doesn't already exist.
+        if (code.startCode(classname + ".j")) {
+            code.emit(".class public " + classname);
+            code.emit(".super java/lang/Object");
+
+            for (int i = 0; i < fields.size(); i++) {
+                String name = fields.get(i);
+                String jvmType = recordType.get(name).getJVMType();
+
+                code.emit(".field public " + name + " " + jvmType);
+            }
+
+            code.emit(".method public <init>()V");
+            code.emit("aload_0");
+            code.emit("invokenonvirtual java/lang/Object/<init>()V");
+            code.emit("return");
+            code.emit(".end method");
+            code.endCode();
+        }
+
+        code.emit("new " + classname);
+        code.emit("dup");
+        code.emit("invokespecial " + classname + "/<init>()V");
+
+        for (int i = 0; i < fields.size(); i++) {
+            String name = fields.get(i);
+            String jvmType = recordType.get(name).getJVMType();
+            ASTNode expression = initExprs.get(i);
+
+            code.emit("dup");
+            expression.compile(env);
+            code.emit("putfield " + classname + "/" + name + " " + jvmType);
+        }
     }
 }

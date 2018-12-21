@@ -1,6 +1,7 @@
 public class ASTSelect implements ASTNode {
     private ASTNode node;
     private String name;
+    private TRecord recordType;
     private IType type;
 
     public ASTSelect(ASTNode node, String name) {
@@ -25,13 +26,13 @@ public class ASTSelect implements ASTNode {
             );
         }
 
-        TRecord record = ((TRecord) t);
-        IType fieldType = record.get(name);
+        recordType = ((TRecord) t);
+        IType fieldType = recordType.get(name);
 
         if (fieldType == null) {
             throw new TypeException(
                 String.format(
-                    "The field '%s' dos not belong to the record %s.", name, record.show()
+                    "The field '%s' dos not belong to the record %s.", name, recordType.show()
                 )
             );
         }
@@ -44,6 +45,11 @@ public class ASTSelect implements ASTNode {
     }
 
     public void compile(Environment<Integer> env) {
+        Code code = Code.getInstance();
+        String classname = recordType.getJVMRecordClass();
 
+        node.compile(env);
+        code.emit("checkcast " + classname);
+        code.emit("getfield " + classname + "/" + name + " " + type.getJVMType());
     }
 }
