@@ -1,24 +1,24 @@
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TRecord implements IType {
     private Map<String, IType> fields;
 
     public TRecord(List<String> fieldNames, List<IType> types) {
         fields = new HashMap<String,IType>(fieldNames.size());
-        for(int i = 0; i < fieldNames.size() ; i++){         
+        for (int i = 0; i < fieldNames.size(); i++) {
             fields.put(fieldNames.get(i),types.get(i));
         }
     }
 
     @Override
     public String show() {
-        String content = "[";
-        for(Map.Entry<String,IType> field : fields.entrySet()){
-            content += "; " + field.getKey() + ":" + field.getValue();
-        }
-        return (content + "]");
+        String content = fields.entrySet().stream()
+                                          .map(e -> e.getKey() + " : " + e.getValue().show())
+                                          .collect(Collectors.joining(", "));
+        return "[" + content + "]";
     }
 
     @Override
@@ -38,7 +38,7 @@ public class TRecord implements IType {
 
     @Override
     public String getJVMReferenceClass() {
-        return "ref_obj";//TODO: ver isto
+        return "ref_obj";
     }
 
     @Override
@@ -52,15 +52,14 @@ public class TRecord implements IType {
 
         TRecord record = (TRecord) obj;
 
-        if (record.fields.size() == this.fields.size()){
-            for(Map.Entry<String,IType> entry : record.fields.entrySet()){
+        if (record.fields.size() == this.fields.size()) {
+            for (Map.Entry<String,IType> entry : record.fields.entrySet()) {
                 IType type = this.fields.get(entry.getKey());
                 if (type == null || !type.equals(entry.getValue()))
                     return false;
             }
             return true;
         }
-
         return false;
     }
 }

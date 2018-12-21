@@ -1,13 +1,14 @@
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class VRecord implements IValue {
     private Map<String, IValue> fields;
 
     public VRecord(List<String> fieldNames, List<IValue> values) {
-        fields = new HashMap<String,IValue>(fieldNames.size());
-        for(int i = 0; i < fieldNames.size() ; i++){         
+        fields = new HashMap<String, IValue>(fieldNames.size());
+        for (int i = 0; i < fieldNames.size(); i++) {
             fields.put(fieldNames.get(i), values.get(i));
         }
     }
@@ -18,11 +19,10 @@ public class VRecord implements IValue {
 
     @Override
     public String show() {
-        String content = "[";
-        for(Map.Entry<String,IValue> field : fields.entrySet()){
-            content += "; " + field.getKey() + " = " + field.getValue();
-        }
-        return (content + "]");
+        String content = fields.entrySet().stream()
+                                          .map(e -> e.getKey() + " = " + e.getValue().show())
+                                          .collect(Collectors.joining(", "));
+        return "[" + content + "]";
     }
 
     @Override
@@ -36,15 +36,14 @@ public class VRecord implements IValue {
 
         VRecord record = (VRecord) obj;
 
-        if (record.fields.size() == this.fields.size()){
-            for(Map.Entry<String,IValue> entry : record.fields.entrySet()){
+        if (record.fields.size() == this.fields.size()) {
+            for (Map.Entry<String,IValue> entry : record.fields.entrySet()) {
                 IValue value = this.fields.get(entry.getKey());
                 if (value == null || !value.equals(entry.getValue()))
                     return false;
             }
             return true;
         }
-
         return false;
     }
 }

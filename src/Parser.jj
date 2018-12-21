@@ -407,20 +407,20 @@ IType Type() :
   |
     <LBRACKET>
     (
-      n=<ID> <COLON> t=Type() 
-      { 
+      n=<ID> <COLON> t=Type()
+      {
         ids.add(n.image);
-        types_list.add(t); 
+        types_list.add(t);
       }
       (
-        <COMMA> n=<ID> <COLON> t=Type() 
-        { 
+        <COMMA> n=<ID> <COLON> t=Type()
+        {
           ids.add(n.image);
-          types_list.add(t); 
+          types_list.add(t);
         }
       )*
     )?
-    <RBRACKET> 
+    <RBRACKET>
     { t = new TRecord(ids, types_list); }
   )
   { return t; }
@@ -452,13 +452,13 @@ ASTNode Factor() :
     <LBRACKET>
     (
       n=<ID> <ASSIGN> t1=Expression()
-      { 
+      {
         ids.add(n.image);
         init_exprs.add(t1);
       }
       (
         <COMMA> n=<ID> <ASSIGN> t1=Expression()
-        { 
+        {
           ids.add(n.image);
           init_exprs.add(t1);
         }
