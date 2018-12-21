@@ -166,6 +166,7 @@ TOKEN :
 | < RPAR : ")" >
 | < LBRACKET : "[" >
 | < RBRACKET : "]" >
+| < DOT : "." >
 | < COMMA : "," >
 | < COLON : ":" >
 | < SEQ : ";" >
@@ -358,7 +359,7 @@ ASTNode FunctionCall() :
   List<ASTNode> args = new ArrayList<ASTNode>();
 }
 {
-  t1=Factor()
+  t1=Select()
   (
     <LPAR>
     (
@@ -372,6 +373,20 @@ ASTNode FunctionCall() :
     { t1 = new ASTApply(t1, args); }
   )?
   { return t1; }
+}
+
+ASTNode Select() :
+{
+  Token n;
+  ASTNode t;
+}
+{
+  t=Factor()
+  (
+    <DOT> n=<ID>
+    { t = new ASTSelect(t, n.image); }
+  )*
+  { return t; }
 }
 
 IType Type() :

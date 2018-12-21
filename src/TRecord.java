@@ -13,6 +13,10 @@ public class TRecord implements IType {
         }
     }
 
+    public IType get(String fieldName) {
+        return fields.get(fieldName);
+    }
+
     @Override
     public String show() {
         String content = fields.entrySet().stream()
