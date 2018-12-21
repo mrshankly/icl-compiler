@@ -94,9 +94,14 @@ public class Parser {
     }
 
     private static void runJasmin(List<String> files) {
-        String[] command = new String[] {
-          "sh", "-c", "java -jar jasmin.jar " + String.join(" ", files)
-        };
+        String[] command = new String[files.size() + 3];
+
+        command[0] = "java";
+        command[1] = "-jar";
+        command[2] = "jasmin.jar";
+        for (int i = 0; i < files.size(); i++) {
+            command[i + 3] = files.get(i);
+        }
 
         try {
             Process p = Runtime.getRuntime().exec(command);
@@ -113,7 +118,7 @@ public class Parser {
                 System.out.println("Warning: Failed to run jasmin.jar on .j files.");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Warning: Failed to run jasmin.jar on .j files.");
             return;
         }
     }
