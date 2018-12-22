@@ -9,6 +9,9 @@ O trabalho prático implementa todas as funcionalidades pedidas no enunciado
 fornecido. O compilador para a linguagem completa, incluindo funções, e também
 os *data types record* e *string*.
 
+**Git commit ID da primeira entrega:** `093a3b535e30f3f92c1e6f00a17c7602367e0a24`
+**Git commit ID da entrega final:** `0099f0706733d4d1cc7db8ecd3e6485326a90247`
+
 ---
 
 ## Project structure
