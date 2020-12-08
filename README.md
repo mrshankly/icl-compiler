@@ -1,25 +1,14 @@
-# Interpretação e Compilação de Linguagens - 2018
+icl-compiler
+============
 
-**Trabalho prático realizado por:**
-
-* João Marques n.° 48500
-* Vicente Almeida n.° 47803
-
-O trabalho prático implementa todas as funcionalidades pedidas no enunciado
-fornecido. O compilador para a linguagem completa, incluindo funções, e também
-os *data types record* e *string*.
-
-**Git commit ID da primeira entrega:** `093a3b535e30f3f92c1e6f00a17c7602367e0a24`
-
-**Git commit ID da entrega final:** `0099f0706733d4d1cc7db8ecd3e6485326a90247`
-
----
+A programming language compiler for a class on Interpreters and Compilers. The
+compiler targets the JVM.
 
 ## Project structure
 
-All the java source files are in the folder `src`. The folder `examples` contains
-some small programs that show how the programming language implemented in this
-project works.
+All the java source files are in the folder `src`. The folder `examples`
+contains some small programs that show how the programming language implemented
+in this project works.
 
 ## Build the project
 
@@ -27,26 +16,20 @@ Clone the repository and run the command `make package`, the file `parser.jar`
 should be created.
 
 ```
-$ git clone https://bitbucket.org/jbmarques/icl-tp1.git
+$ git clone https://github.com/mrshankly/icl-compiler.git
 $ cd icl-tp1
 $ make package
 ```
 
-#### Manual build without *make*
-
-If you do not have *make* installed you can still build the project manually,
-`cd` into the folder `src`, run `javacc` on the file `Parser.jj` and then compile
-the java files with `javac *.java`. To run the program you should then use the
-class file `Parser.class`.
-
 ## How to run
 
-You can run the program in one of two modes, REPL mode or compiler mode.
+You can run the program in one of two modes, interpreter mode or compiler mode.
 
-To run the REPL simply do `java -jar parser.jar`, you should now be in the REPL.
+To run the interpreter simply do `java -jar parser.jar`, you should now be in
+the REPL.
 
-To compile a file and generate the `.j` and the corresponding `.class` files you do
-`java -jar parser.jar source_file.icll`.
+To compile a file and generate the `.j` and the corresponding `.class` files you
+do `java -jar parser.jar source_file.icll`.
 
 Here is how you can run the hello world example in `examples/hello_world.icll`:
 
@@ -59,5 +42,49 @@ Hello world!
 ```
 
 As you can see from above, the program runs `jasmin.jar` on the generated `.j`
-files. If for some reason the jasmin command can not be executed a warning message
-should be shown, if this happens you have to manually run jasmin on the `.j` files.
+files. If for some reason the jasmin command can not be executed a warning
+message should be shown, if this happens you have to manually run jasmin on the
+`.j` files.
+
+## Example
+
+The example below shows a rudimentary implementation of estimating the value of
+Pi using Monte Carlo.
+
+```ocaml
+let
+    mod : (int, int)int = fun dividend:int, divisor:int ->
+        dividend - divisor * (dividend / divisor)
+    end
+
+    seed : ref int = new 2
+
+    random : ()int = fun ->
+        seed := mod(8121 * !seed + 28411, 181); !seed
+    end
+
+    is_inside_circle : (int, int)bool = fun x:int, y:int ->
+        (x * x) + (y * y) <= 32767
+    end
+in
+    let
+        i : ref int = new 0
+        s : ref int = new 0
+    in
+        while !i < 30000 do
+            let
+                x : int = random()
+                y : int = random()
+            in
+                if is_inside_circle(x, y) then
+                    s := !s + 1
+                else
+                    !s
+                end;
+                i := !i + 1
+            end
+        end;
+        println 4 * !s * 100 / 30000
+    end
+end;;
+```
